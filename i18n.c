@@ -14,7 +14,7 @@ const tI18nPhrase Phrases[] = {
     "",
     "",// TODO Nederlands
     "",// TODO Portugues
-    "",
+    "Afficher les enregistrements pour chaque carte",
     "",// TODO Norsk
     "",
     "",// TODO Polski
@@ -64,7 +64,7 @@ const tI18nPhrase Phrases[] = {
     "",// TODO
     "",// TODO
     "",// TODO
-    "",
+    "Status d'enregristrement",
     "",// TODO
     "",
     "",// TODO
@@ -89,7 +89,7 @@ const tI18nPhrase Phrases[] = {
     "",// TODO
     "",// TODO
     "",// TODO
-    "",
+    "Carte",
     "",// TODO
     "",
     "",// TODO
@@ -110,6 +110,56 @@ const tI18nPhrase Phrases[] = {
   },
   { "no current recordings",
     "keine laufenden Aufnahmen",
+    "",// TODO
+    "",// TODO
+    "",// TODO
+    "",// TODO
+    "pas d'enregistrement actuellement",
+    "",// TODO
+    "",
+    "",// TODO
+    "",// TODO
+    "",// TODO
+    "",// TODO
+    "",// TODO
+    "",// TODO
+    "",// TODO
+    "",// TODO
+    "",// TODO
+#if VDRVERSNUM && VDRVERSNUM >= 10313
+    "", // Eesti
+#if VDRVERSNUM >= 10316
+    "", // Dansk
+#endif
+#endif
+  },
+  { "device with decoder",
+    "Gerät hat Decoder",
+    "",// TODO
+    "",// TODO
+    "",// TODO
+    "",// TODO
+    "",
+    "",// TODO
+    "",
+    "",// TODO
+    "",// TODO
+    "",// TODO
+    "",// TODO
+    "",// TODO
+    "",// TODO
+    "",// TODO
+    "",// TODO
+    "",// TODO
+#if VDRVERSNUM && VDRVERSNUM >= 10313
+    "", // Eesti
+#if VDRVERSNUM >= 10316
+    "", // Dansk
+#endif
+#endif
+  },
+  { "primary device",
+    "Primärgerät",
     "",// TODO
     "",// TODO
     "",// TODO

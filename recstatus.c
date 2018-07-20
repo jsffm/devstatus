@@ -10,17 +10,16 @@
 #include <vdr/menu.h>
 #include "i18n.h"
 
-static const char *VERSION        = "0.0.1.beta1";
+static const char *VERSION        = "0.0.2";
 static const char *DESCRIPTION    = "recording status monitor";
 static const char *MAINMENUENTRY  = "Recording status";
 
 #undef DAYDATETIMESTRING
-#if VDRVERSNUM && VDRVERSNUM >= 10318
+#if VDRVERSNUM >= 10318
 #define DAYDATETIME(x) *DayDateTime(x)
 #else
 #define DAYDATETIME(x) DayDateTime(x)
 #endif
-
 
 // --- cRecObj --------------------------------------------------------
 class cRecObj : public cListObject {
@@ -44,7 +43,11 @@ public:
 class cRecStatusMonitor : public cStatus 
 {
 protected:
+#if VDRVERSNUM >= 10338
+    virtual void Recording(const cDevice *Device, const char *Name, const char *FileName, bool On);
+#else
     virtual void Recording(const cDevice *Device, const char *Name);
+#endif
  public:
     cRecStatusMonitor();
 };
@@ -83,11 +86,17 @@ public:
 	  {
 	      cDevice *d = cDevice::GetDevice(i);
 	      char* devName = NULL;
-	      asprintf(&devName, "--- %s %d ---", tr("Device"), i+1); 
+	      char* devInfo = NULL;
+	      if (d->HasDecoder() || d->IsPrimaryDevice())
+	          asprintf(&devInfo, " (%s%s%s)", d->HasDecoder() ? tr("device with decoder") : "", (d->HasDecoder() && d->IsPrimaryDevice()) ? ", " : "", d->IsPrimaryDevice() ? tr("primary device") : "");
+
+	      asprintf(&devName, "--- %s %d%s ---", tr("Device"), i+1, devInfo ? devInfo : "");
 	      cMenuRecItem* DeviceHeader =  new cMenuRecItem(devName);
 	      DeviceHeader->SetSelectable(false);
 	      Add(DeviceHeader);
 	      free(devName);
+	      if (devInfo)
+	          free(devInfo);
 	      int Count = 0;
 	      for (cRecObj *r = CurrentRecordings.First(); r; r = CurrentRecordings.Next(r)) 
 	      {
@@ -103,9 +112,15 @@ public:
 		  norec->SetSelectable(false);
 		  Add(norec);
 	      }
+	      if (i < cDevice::NumDevices())
+	      {
+	          DeviceHeader =  new cMenuRecItem("");
+	          DeviceHeader->SetSelectable(false);
+	          Add(DeviceHeader);
+              }
 	  }	 
       }
-    eOSState cMenuRecStatus::Play(char* file)
+    eOSState Play(char* file)
 	{
 	    cRecording* recordingFound = NULL;
 	    for(cRecording* recording = Recordings.First(); recording; recording = Recordings.Next(recording))
@@ -116,7 +131,7 @@ public:
 	    cReplayControl::SetRecording(recordingFound->FileName(), recordingFound->Title());
 	    return osReplay;
 	}
-    eOSState cMenuRecStatus::ProcessKey(eKeys Key)
+    eOSState ProcessKey(eKeys Key)
 	{
 	    eOSState state = cOsdMenu::ProcessKey(Key);	    
 	    if (state == osUnknown) 
@@ -244,7 +259,11 @@ cRecStatusMonitor::cRecStatusMonitor()
 }
 
 
-void cRecStatusMonitor::Recording(const cDevice *Device, const char* Name)
+#if VDRVERSNUM >= 10338 
+void cRecStatusMonitor::Recording(const cDevice *Device, const char *Name, const char *FileName, bool On)
+#else
+void cRecStatusMonitor::Recording(const cDevice *Device, const char *Name)
+#endif
 {
     // insert new timers currently recording in TimersRecording
     if (Name)

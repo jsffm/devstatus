@@ -1,10 +1,13 @@
 This is a "plugin" for the Video Disk Recorder (VDR).
 
-Written by:                  Christian Wieninger <cwieninger-at-gmx-dot-de>
+Originally written by:       Christian Wieninger <cwieninger-at-gmx-dot-de>
 
-Project's homepage:          URL
+Since v0.0.2 maintained by:  Mike Constabel <vdr-at-constabel-dot-net>
+                             Mike Constabel vejoun @ vdrportal
 
-Latest version available at: www.vdrportal.de
+Project's homepage:          http://www.constabel.net/vdr/plugins.de.htm
+
+Latest version available at: http://www.constabel.net/vdr/plugins.de.htm
 
 See the file COPYING for license information.
 
@@ -14,6 +17,10 @@ This is a simple plugin, that displays the recording status of the
 available devices. Each device shows its current recordings with
 their start time and title. Selecting a recording and pressing 'ok'
 starts it for timeshift viewing.
+
+
+
+---
 
 The purpose for writing this, was for special testing of my
 configuration. So its unlikely that this plugin will be maintained,
