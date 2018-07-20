@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: VDR 1.5.7\n"
 "Report-Msgid-Bugs-To: <koch@u32.de>\n"
-"POT-Creation-Date: 2008-12-02 21:46+0100\n"
+"POT-Creation-Date: 2009-02-14 15:31+0100\n"
 "PO-Revision-Date: 2007-08-18 21:11+0200\n"
 "Last-Translator: Jordi Vilà <jvila@tinet.org>\n"
 "Language-Team: <vdr@linuxtv.org>\n"
@@ -21,105 +21,145 @@ msgstr ""
 msgid "Status of dvb devices"
 msgstr ""
 
-#: devstatus.c:19 devstatus.c:216
+#: devstatus.c:19 devstatus.c:217
 msgid "Device status"
 msgstr ""
 
-#: devstatus.c:39
+#: devstatus.c:40
 msgid "satellite card"
 msgstr ""
 
-#: devstatus.c:40
+#: devstatus.c:41
 msgid "cable card"
 msgstr ""
 
-#: devstatus.c:41
+#: devstatus.c:42
 msgid "terrestrial card"
 msgstr ""
 
-#: devstatus.c:42
+#: devstatus.c:43
 msgid "unknown cardtype"
 msgstr ""
 
-#: devstatus.c:202
+#: devstatus.c:203
 #, c-format
 msgid "frequency: %d MHz, signal: %d%%, s/n: %d%%"
 msgstr ""
 
-#: devstatus.c:206
+#: devstatus.c:207
 #, c-format
 msgid "no signal information available (rc=%d)"
 msgstr ""
 
-#: devstatus.c:231 devstatus.c:536
+#: devstatus.c:232 devstatus.c:563
 msgid "device with decoder"
 msgstr ""
 
-#: devstatus.c:233 devstatus.c:536
+#: devstatus.c:234 devstatus.c:563
 msgid "primary device"
 msgstr ""
 
-#: devstatus.c:237 devstatus.c:537 devstatus.c:572
+#: devstatus.c:238 devstatus.c:564 devstatus.c:599
 msgid "Device"
 msgstr ""
 
-#: devstatus.c:239
+#: devstatus.c:240
 msgid "-- Live"
 msgstr ""
 
-#: devstatus.c:264 devstatus.c:557
+#: devstatus.c:265 devstatus.c:584
 msgid "currently no recordings"
 msgstr ""
 
-#: devstatus.c:282
+#. TRANSLATORS: printf string for channel line
+#: devstatus.c:284
 #, c-format
-msgid "  %4d %s %s"
+msgid "%5d  %s %s  %s  %s%s%s"
 msgstr ""
 
-#: devstatus.c:313
+#. TRANSLATORS: abbr. for tv-channels
+#: devstatus.c:288
+msgid "t"
+msgstr ""
+
+#. TRANSLATORS: abbr. for video only-channels
+#: devstatus.c:290
+msgid "v"
+msgstr ""
+
+#. TRANSLATORS: abbr. for radio-channels
+#: devstatus.c:292
+msgid "r"
+msgstr ""
+
+#. TRANSLATORS: abbr. for no signal-channels
+#: devstatus.c:294
+msgid "-"
+msgstr ""
+
+#. TRANSLATORS: abbr. for live channel
+#: devstatus.c:297
+msgid "+"
+msgstr ""
+
+#. TRANSLATORS: abbr. for crypted channels
+#: devstatus.c:299
+msgid "x"
+msgstr ""
+
+#. TRANSLATORS: abbr. for FTA channels
+#: devstatus.c:301
+msgid " "
+msgstr ""
+
+#: devstatus.c:335
 msgid "no recordings"
 msgstr ""
 
-#: devstatus.c:313
+#: devstatus.c:335
 msgid "recordings"
 msgstr ""
 
-#: devstatus.c:314
+#: devstatus.c:336
 msgid "no strength"
 msgstr ""
 
-#: devstatus.c:314
+#: devstatus.c:336
 msgid "strength"
 msgstr ""
 
-#: devstatus.c:315
+#: devstatus.c:337
 msgid "channels"
 msgstr ""
 
-#: devstatus.c:315
+#: devstatus.c:337
 msgid "no channels"
 msgstr ""
 
-#: devstatus.c:316
+#: devstatus.c:338
 msgid "Refresh display"
 msgstr ""
 
-#: devstatus.c:443
+#: devstatus.c:467
 msgid "Show recordings"
 msgstr ""
 
-#: devstatus.c:444
+#: devstatus.c:468
 msgid "Show signals"
 msgstr ""
 
-#: devstatus.c:445
+#: devstatus.c:469
 msgid "Show channels"
 msgstr ""
 
-#: devstatus.c:530
+#: devstatus.c:470
+msgid "Show channel provider"
+msgstr ""
+
+#: devstatus.c:557
 msgid "List of DVB devices"
 msgstr ""
 
-#: devstatus.c:568
+#: devstatus.c:595
 msgid "Number of concurrent recordings"
 msgstr ""

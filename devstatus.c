@@ -11,10 +11,10 @@
 #include <vdr/plugin.h>
 #include <vdr/status.h>
 #include <vdr/menu.h>
-#include "i18n.h"
+#include <vdr/i18n.h>
 
 
-static const char *VERSION        = "0.3.0";
+static const char *VERSION        = "0.4.0";
 static const char *DESCRIPTION    = trNOOP("Status of dvb devices");
 static const char *MAINMENUENTRY  = trNOOP("Device status");
 
@@ -30,6 +30,7 @@ static const char *MAINMENUENTRY  = trNOOP("Device status");
 static int showRecordings = 1;
 static int showStrength  = 1;
 static int showChannels  = 1;
+static int showChProvider  = 1;
 static int update = 0;
 
 //----------------Tools
@@ -79,7 +80,7 @@ cChannel* nextTransponderChannel( cDevice *device, int direction) {
             
    for (channelNo = 1; channelNo <= Channels.MaxNumber(); channelNo++) {
       if( (channel = Channels.GetByNumber(channelNo)) ) {
-          if( device->ProvidesSource( channel->Source() ) ) { // same Source (DVB-T, -S, ...)
+          if( device->ProvidesSource( channel->Source() ) ) { // same source (DVB-T, -S, ...)
              if( !ISTRANSPONDER(channel->Frequency(),oldQRG) ) {  //not the same transponder
                if( channel->Frequency()*direction > oldQRG*direction ) {  
                  if(  resChannel == NULL 
@@ -228,9 +229,9 @@ public:
               //  line  --- device <n> ....
               if (d->HasDecoder() || d->IsPrimaryDevice())
                   asprintf(&devInfo, " (%s%s%s)", 
-                    d->HasDecoder() ? tr("device with decoder") : "", 
+                    d->HasDecoder()      ? tr("device with decoder") : "", 
                     (d->HasDecoder() && d->IsPrimaryDevice()) ? ", " : "", 
-                    d->IsPrimaryDevice() ? tr("primary device") : ""
+                    d->IsPrimaryDevice() ? tr("primary device")      : ""
                   );
              
               asprintf(&devName, "--- %s %d %s %s ---",
@@ -279,12 +280,33 @@ public:
                        if (d->IsTunedToTransponder(channel)) {
                             bool currentLive = channelNo == d->CurrentChannel() 
                                                && (i == cDevice::ActualDevice()->CardIndex());
-                            asprintf(&output, tr("  %4d %s %s"), 
+                                              /* TRANSLATORS: printf string for channel line */
+                            asprintf(&output, tr("%5d  %s %s  %s  %s%s%s"), 
                                         channelNo, 
-                                        currentLive ? "+":"-",
-                                        channel->Name()
+                                        (channel->Vpid() > 0) 
+                                              /* TRANSLATORS: abbr. for tv-channels */
+                                            ? (channel->Apid(0) > 0)  ? tr("t")  
+                                              /* TRANSLATORS: abbr. for video only-channels */
+                                                                      : tr("v") 
+                                              /* TRANSLATORS: abbr. for radio-channels */
+                                            : (channel->Apid(0) > 0)  ? tr("r") 
+                                              /* TRANSLATORS: abbr. for no signal-channels */
+                                                                      : tr("-"),
+
+                                             /* TRANSLATORS: abbr. for live channel */
+                                        currentLive ?               tr("+")  
+                                             /* TRANSLATORS: abbr. for crypted channels */ 
+                                            : (channel->Ca() > 4) ? tr("x")  
+                                             /* TRANSLATORS: abbr. for FTA channels */
+                                            :                       tr(" "),
+
+                                        channel->Name(),
+
+                                        showChProvider ? "(":"",
+                                        showChProvider ? channel->Provider():"",
+                                        showChProvider ? ")":""
                             );
-                            
+
                             norec = new cMenuRecItem(output);
                             norec->ChannelNr = channelNo;
                             norec->DeviceNr = i;
@@ -430,6 +452,7 @@ private:
   int newShowRecordings;
   int newShowStrength;
   int newShowChannels;
+  int newShowChProvider;
 protected:
   virtual void Store(void);
 public:
@@ -440,15 +463,18 @@ cMenuSetupDevstatus::cMenuSetupDevstatus(void) {
   newShowRecordings = showRecordings;
   newShowStrength   = showStrength;
   newShowChannels   = showChannels;
-  Add(new cMenuEditBoolItem(tr("Show recordings"), &newShowRecordings));
-  Add(new cMenuEditBoolItem(tr("Show signals"   ), &newShowStrength));
-  Add(new cMenuEditBoolItem(tr("Show channels"  ), &newShowChannels));
+  newShowChProvider = showChProvider;
+  Add(new cMenuEditBoolItem(tr("Show recordings"       ), &newShowRecordings));
+  Add(new cMenuEditBoolItem(tr("Show signals"          ), &newShowStrength));
+  Add(new cMenuEditBoolItem(tr("Show channels"         ), &newShowChannels));
+  Add(new cMenuEditBoolItem(tr("Show channel provider" ), &newShowChProvider));
 }
 
 void cMenuSetupDevstatus::Store(void) {
   SetupStore("ShowRecordings", showRecordings = newShowRecordings);
-  SetupStore("ShowStrength", showStrength = newShowStrength);
-  SetupStore("ShowChannels", showChannels = newShowChannels);
+  SetupStore("ShowStrength",   showStrength = newShowStrength);
+  SetupStore("ShowChannels",   showChannels = newShowChannels);
+  SetupStore("ShowChProvider", showChProvider = newShowChProvider);
 }
 
 bool cPluginDevstatus::SetupParse(const char *Name, const char *Value) {
@@ -456,6 +482,7 @@ bool cPluginDevstatus::SetupParse(const char *Name, const char *Value) {
   if      (!strcasecmp(Name, "ShowRecordings"))  showRecordings = atoi(Value) % 2;
   else if (!strcasecmp(Name, "ShowStrength"  ))  showStrength = atoi(Value) % 2;
   else if (!strcasecmp(Name, "ShowChannels"  ))  showChannels = atoi(Value) % 2;
+  else if (!strcasecmp(Name, "ShowChProvider"))  showChProvider = atoi(Value) % 2;
   else return false;
   return true;
 }

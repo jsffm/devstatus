@@ -9,126 +9,162 @@ msgid ""
 msgstr ""
 "Project-Id-Version: VDR 1.5.7\n"
 "Report-Msgid-Bugs-To: <koch@u32.de>\n"
-"POT-Creation-Date: 2008-12-02 22:05+0100\n"
-"PO-Revision-Date: 2008-01-02 22:52+0100\n"
-"Last-Translator: Gringo <vdr-italian@tiscali.it>\n"
+"POT-Creation-Date: 2009-02-14 15:31+0100\n"
+"PO-Revision-Date: 2009-02-09 23:48+0100\n"
+"Last-Translator: Diego Pierotto <vdr-italian@tiscali.it>\n"
 "Language-Team:  <vdr@linuxtv.org>\n"
 "MIME-Version: 1.0\n"
-"Content-Type: text/plain; charset=ISO-8859-15\n"
+"Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"X-Poedit-Language: Italian\n"
+"X-Poedit-Country: ITALY\n"
+"X-Poedit-SourceCharset: utf-8\n"
 
 #: devstatus.c:18
-#, fuzzy
 msgid "Status of dvb devices"
-msgstr "Stato registrazioni periferiche DVB"
+msgstr "Stato schede DVB"
 
-#: devstatus.c:19 devstatus.c:216
-#, fuzzy
+#: devstatus.c:19 devstatus.c:217
 msgid "Device status"
-msgstr "Scheda"
-
-#: devstatus.c:39
-msgid "satellite card"
-msgstr ""
+msgstr "Stato scheda"
 
 #: devstatus.c:40
-msgid "cable card"
-msgstr ""
+msgid "satellite card"
+msgstr "Scheda satellite"
 
 #: devstatus.c:41
-msgid "terrestrial card"
-msgstr ""
+msgid "cable card"
+msgstr "Scheda via cavo"
 
 #: devstatus.c:42
-msgid "unknown cardtype"
-msgstr ""
+msgid "terrestrial card"
+msgstr "Scheda terrestre"
 
-#: devstatus.c:202
+#: devstatus.c:43
+msgid "unknown cardtype"
+msgstr "Tipo scheda sconosciuta"
+
+#: devstatus.c:203
 #, c-format
 msgid "frequency: %d MHz, signal: %d%%, s/n: %d%%"
-msgstr ""
+msgstr "Frequenza: %d MHz, Segnale: %d%%, s/n: %d%%"
 
-#: devstatus.c:206
+#: devstatus.c:207
 #, c-format
 msgid "no signal information available (rc=%d)"
-msgstr ""
+msgstr "Nessuna info di segnale disponibile (rc=%d)"
 
-#: devstatus.c:231 devstatus.c:536
+#: devstatus.c:232 devstatus.c:563
 msgid "device with decoder"
-msgstr "scheda con decoder"
+msgstr "sch. con decoder"
 
-#: devstatus.c:233 devstatus.c:536
+#: devstatus.c:234 devstatus.c:563
 msgid "primary device"
-msgstr "scheda primaria"
+msgstr "sch. primaria"
 
-#: devstatus.c:237 devstatus.c:537 devstatus.c:572
+#: devstatus.c:238 devstatus.c:564 devstatus.c:599
 msgid "Device"
 msgstr "Scheda"
 
-#: devstatus.c:239
+#: devstatus.c:240
 msgid "-- Live"
-msgstr ""
+msgstr "-- Dal vivo"
 
-#: devstatus.c:264 devstatus.c:557
-#, fuzzy
+#: devstatus.c:265 devstatus.c:584
 msgid "currently no recordings"
-msgstr "nessuna registrazione al momento"
+msgstr "Nessuna registrazione in corso"
 
-#: devstatus.c:282
-#, c-format
-msgid "  %4d %s %s"
+#. TRANSLATORS: printf string for channel line
+#: devstatus.c:284
+#, fuzzy, c-format
+msgid "%5d  %s %s  %s  %s%s%s"
+msgstr "  %4d %s %s"
+
+#. TRANSLATORS: abbr. for tv-channels
+#: devstatus.c:288
+msgid "t"
 msgstr ""
 
-#: devstatus.c:313
-#, fuzzy
+#. TRANSLATORS: abbr. for video only-channels
+#: devstatus.c:290
+msgid "v"
+msgstr ""
+
+#. TRANSLATORS: abbr. for radio-channels
+#: devstatus.c:292
+msgid "r"
+msgstr ""
+
+#. TRANSLATORS: abbr. for no signal-channels
+#: devstatus.c:294
+msgid "-"
+msgstr ""
+
+#. TRANSLATORS: abbr. for live channel
+#: devstatus.c:297
+msgid "+"
+msgstr ""
+
+#. TRANSLATORS: abbr. for crypted channels
+#: devstatus.c:299
+msgid "x"
+msgstr ""
+
+#. TRANSLATORS: abbr. for FTA channels
+#: devstatus.c:301
+msgid " "
+msgstr ""
+
+#: devstatus.c:335
 msgid "no recordings"
-msgstr "Stato registrazioni"
+msgstr "Nessuna registrazione"
 
-#: devstatus.c:313
-#, fuzzy
+#: devstatus.c:335
 msgid "recordings"
-msgstr "Stato registrazioni"
+msgstr "Registrazioni"
 
-#: devstatus.c:314
+#: devstatus.c:336
 msgid "no strength"
-msgstr ""
+msgstr "Nessuna intensità"
 
-#: devstatus.c:314
+#: devstatus.c:336
 msgid "strength"
-msgstr ""
+msgstr "Intensità"
 
-#: devstatus.c:315
+#: devstatus.c:337
 msgid "channels"
-msgstr ""
+msgstr "Canali"
 
-#: devstatus.c:315
+#: devstatus.c:337
 msgid "no channels"
-msgstr ""
+msgstr "Nessun canale"
 
-#: devstatus.c:316
+#: devstatus.c:338
 msgid "Refresh display"
-msgstr ""
+msgstr "Aggiorna visualizzazione"
 
-#: devstatus.c:443
-#, fuzzy
+#: devstatus.c:467
 msgid "Show recordings"
-msgstr "Stato registrazioni"
+msgstr "Mostra registrazioni"
 
-#: devstatus.c:444
+#: devstatus.c:468
 msgid "Show signals"
-msgstr ""
+msgstr "Mostra segnali"
 
-#: devstatus.c:445
+#: devstatus.c:469
 msgid "Show channels"
-msgstr ""
+msgstr "Mostra canali"
 
-#: devstatus.c:530
+#: devstatus.c:470
+#, fuzzy
+msgid "Show channel provider"
+msgstr "Mostra canali"
+
+#: devstatus.c:557
 msgid "List of DVB devices"
-msgstr "Elenco periferiche DVB"
+msgstr "Elenco schede DVB"
 
-#: devstatus.c:568
+#: devstatus.c:595
 msgid "Number of concurrent recordings"
 msgstr "Numero di registrazioni simultanee"
 
-#~ msgid "Recording status"
-#~ msgstr "Stato registrazioni"

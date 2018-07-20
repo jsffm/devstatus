@@ -1,6 +1,20 @@
 VDR Plugin 'devstatus' Revision History
 ---------------------------------------
 
+2009-02-14: Version 0.4.0  ("Pinky")
+- updated italian translation 
+  (tnx to Diego Pierotto, vdr-italian at tiscali.it)
+- switched completely to VDR 1.6's i18n system and removed the 
+  old stuff - no more support for older VDR versions
+- .so is now stripped by default 
+- added a warning to README about possible corrupting recordings 
+  by pressing "7", "9" or "OK"
+- the provider name of every channel is now displayed 
+  (switchable in the setup)
+- the state (FTA, crypted, radio, TV or void) of each channel 
+  is now displayed  
+
+
 2008-12-02: Version 0.3.0  ("Chicolini")
 
 - The screen ist automagically rewritten as soon as a channel is
@@ -9,10 +23,10 @@ VDR Plugin 'devstatus' Revision History
 - The selected line is retained after a screen refresh 
 - the tuned frequency is now displayed 
 - channel switching substituted by real transponder switching:
-  pressing channel down/up or 7/9 will tune the selected device
+  pressing or 7/9 will tunethe selected device
   to the closest transponder frequency; the live view is 
   _not_ switched, so you can tune even to crypted channel
-- strange signal values will ... should be suppressed
+- strange signal values will ... should be suppressed now
 - setup page added (suggested by vejoun at vdr-portal.de)
 - fixed SVDRP crash, needs still some work (fixed by Joe_D at vdr-portal.de)
 - minor optical issues

@@ -15,12 +15,11 @@ VERSION = $(shell grep 'static const char \*VERSION *=' $(PLUGIN).c | awk '{ pri
 
 ### The C++ compiler and options:
 
-CXX      ?= g++
-CXXFLAGS ?= -O2 -Wall -Woverloaded-virtual
+OPTLEVEL ?= 2
+CXXFLAGS = -O$(OPTLEVEL) -Wall -Woverloaded-virtual
 
 ### The directory environment:
 
-DVBDIR = ../../../../DVB
 VDRDIR = ../../..
 LIBDIR = ../../lib
 TMPDIR = /tmp
@@ -29,9 +28,13 @@ TMPDIR = /tmp
 
 -include $(VDRDIR)/Make.config
 
-### The version number of VDR (taken from VDR's "config.h"):
+# Strip debug symbols?  Set eg. to /bin/true if not
+STRIP = strip
 
-APIVERSION = $(shell grep 'define APIVERSION ' $(VDRDIR)/config.h | awk '{ print $$3 }' | sed -e 's/"//g')
+
+### The version number of VDR's plugin API (taken from VDR's "config.h"):
+
+APIVERSION = $(shell sed -ne '/define APIVERSION/s/^.*"\(.*\)".*$$/\1/p' $(VDRDIR)/config.h)
 
 ### The name of the distribution archive:
 
@@ -46,14 +49,14 @@ DEFINES += -D_GNU_SOURCE -DPLUGIN_NAME_I18N='"$(PLUGIN)"'
 
 ### The object files (add further files here):
 
-OBJS = $(PLUGIN).o i18n.o
+OBJS = $(PLUGIN).o 
 
 ### Implicit rules:
 
 %.o: %.c
 	$(CXX) $(CXXFLAGS) -c $(DEFINES) $(INCLUDES) $<
 
-# Dependencies:
+### Dependencies:
 
 MAKEDEP = $(CXX) -MM -MG
 DEPFILE = .dependencies
@@ -64,8 +67,6 @@ $(DEPFILE): Makefile
 
 ### Internationalization (I18N):
 
-### Internationalization (I18N):
-
 PODIR     = po
 LOCALEDIR = $(VDRDIR)/locale
 I18Npo    = $(wildcard $(PODIR)/*.po)
@@ -73,9 +74,6 @@ I18Nmo    = $(addsuffix .mo, $(foreach file, $(I18Npo), $(basename $(file))))
 I18Ndirs  = $(notdir $(foreach file, $(I18Npo), $(basename $(file))))
 I18Npot   = $(PODIR)/$(PLUGIN).pot
 I18Nvdrmo = vdr-$(PLUGIN).mo
-ifeq ($(strip $(APIVERSION)),1.5.7)
-  I18Nvdrmo = $(PLUGIN).mo
-endif
 
 %.mo: %.po
 	msgfmt -c -o $@ $<
@@ -85,6 +83,7 @@ $(I18Npot): $(wildcard *.c)
 
 $(I18Npo): $(I18Npot)
 	msgmerge -U --no-wrap -F --backup=none -q $@ $<
+	@touch $@
 
 i18n: $(I18Nmo)
 	@mkdir -p $(LOCALEDIR)
@@ -93,8 +92,6 @@ i18n: $(I18Nmo)
 	    cp $(PODIR)/$$i.mo $(LOCALEDIR)/$$i/LC_MESSAGES/$(I18Nvdrmo);\
 	    done
 
-generate-i18n: i18n-template.h $(I18Npot) $(I18Npo) buildutil/pot2i18n.pl
-	buildutil/pot2i18n.pl $(I18Npot) i18n-template.h > i18n-generated.h
 
 ### Targets:
 
@@ -102,7 +99,8 @@ all: libvdr-$(PLUGIN).so i18n
 
 libvdr-$(PLUGIN).so: $(OBJS)
 	$(CXX) $(CXXFLAGS) -shared $(OBJS) -o $@
-	@cp $@ $(LIBDIR)/$@.$(APIVERSION)
+	@$(STRIP) $@
+	@cp --remove-destination $@ $(LIBDIR)/$@.$(APIVERSION)
 
 dist: clean
 	@-rm -rf $(TMPDIR)/$(ARCHIVE)
@@ -115,3 +113,4 @@ dist: clean
 clean:
 	@-rm -f $(PODIR)/*.mo $(PODIR)/*.pot
 	@-rm -f $(OBJS) $(DEPFILE) *.so *.tgz core* *~
+
