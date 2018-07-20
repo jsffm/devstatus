@@ -18,7 +18,7 @@ const tI18nPhrase Phrases[] = {
     "",// TODO Norsk
     "",
     "",// TODO Polski
-    "",// TODO Español
+    "Ver grabaciones actuales de cada dispositivo",// Español
     "",// TODO ÅëëçíéêÜ (Greek)
     "",// TODO Svenska
     "",// TODO Romaneste
@@ -43,7 +43,7 @@ const tI18nPhrase Phrases[] = {
     "",// TODO
     "Laajennoksella ei ole infotekstiä!",
     "",// TODO
-    "",// TODO
+    "¡Este plugin no tiene información!",
     "",// TODO
     "",// TODO
     "",// TODO
@@ -64,11 +64,11 @@ const tI18nPhrase Phrases[] = {
     "",// TODO
     "",// TODO
     "",// TODO
-    "Status d'enregristrement",
+    "Status d'enregistrement",
     "",// TODO
     "",
     "",// TODO
-    "",// TODO
+    "Estado de la grabación",
     "",// TODO
     "",// TODO
     "",// TODO
@@ -93,7 +93,7 @@ const tI18nPhrase Phrases[] = {
     "",// TODO
     "",
     "",// TODO
-    "",// TODO
+    "Dispositivo",
     "",// TODO
     "",// TODO
     "",// TODO
@@ -118,7 +118,7 @@ const tI18nPhrase Phrases[] = {
     "",// TODO
     "",
     "",// TODO
-    "",// TODO
+    "actualmente no hay grabaciones",
     "",// TODO
     "",// TODO
     "",// TODO
@@ -139,11 +139,11 @@ const tI18nPhrase Phrases[] = {
     "",// TODO
     "",// TODO
     "",// TODO
-    "",
+    "La carte a un décodeur",
     "",// TODO
     "",
     "",// TODO
-    "",// TODO
+    "Decodificador",
     "",// TODO
     "",// TODO
     "",// TODO
@@ -164,11 +164,11 @@ const tI18nPhrase Phrases[] = {
     "",// TODO
     "",// TODO
     "",// TODO
-    "",
+    "Carte primaire",
     "",// TODO
     "",
     "",// TODO
-    "",// TODO
+    "Dispositivo principal",
     "",// TODO
     "",// TODO
     "",// TODO

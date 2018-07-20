@@ -10,7 +10,7 @@
 #include <vdr/menu.h>
 #include "i18n.h"
 
-static const char *VERSION        = "0.0.2";
+static const char *VERSION        = "0.0.4";
 static const char *DESCRIPTION    = "recording status monitor";
 static const char *MAINMENUENTRY  = "Recording status";
 
