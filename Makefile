@@ -18,10 +18,15 @@ VERSION = $(shell grep 'static const char \*VERSION *=' $(PLUGIN).c | awk '{ pri
 
 # Use package data if installed...otherwise assume we're under the VDR source directory:
 PKGCFG = $(if $(VDRDIR),$(shell pkg-config --variable=$(1) $(VDRDIR)/vdr.pc),$(shell pkg-config --variable=$(1) vdr || pkg-config --variable=$(1) ../../../vdr.pc))
-LIBDIR = $(call PKGCFG,libdir)
-LOCDIR = $(call PKGCFG,locdir)
+LIBDIR   = $(call PKGCFG,libdir)
+LOCDIR   = $(call PKGCFG,locdir)
+PLGCFG   = $(call PKGCFG,plgcfg)
 #
 TMPDIR ?= /tmp
+
+### Allow user defined options to overwrite defaults:
+
+-include $(PLGCFG)
 
 ### The compiler options:
 
