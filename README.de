@@ -1,0 +1,54 @@
+Moin,
+
+ich habe das allseits bekannte recstatus-Plugin ein wenig aufgeblasen. 
+Es zeigt Infos zu allen von vdr verwendeten Videodevices an. Und zwar 
+* den Typ (DVB-T, -S und -C), 
+* den Namen (meist den des Chipsatzes), 
+* die Signalstärke und das Signal/Rauschverhältnis (sofern die Karte 
+  das unterstützt) 
+* sowie alle Kanäle, auf die das Gerät gerade abgestimmt ist (und 
+  somit bei Aufnahmen gleichzeitig benutzen kann). 
+  
+Die Infos zum Signal, zu den Kanälen und zu den Aufnahmen lassen 
+sich mit den Farbtasten einzeln aus- und einblenden.
+
+Die Ausgabe sieht bei mir so aus: 
+                                               Device status
+
+   --- Device 1  (device with decoder, primary device) ---
+   satellite card (ST STV0299 DVB-S)
+   signal: 72 %, s/n: 85 %
+   currently no recordings
+     tuned to  4 - arte
+     tuned to  23 - EinsFestival
+     tuned to  24 - EinsExtra
+     tuned to  25 - EinsPlus
+     tuned to  29 - Phoenix
+
+   --- Device 2  ---
+   terrestrial card (Philips TDA10045H DVB-T)
+   signal: 80 %, s/n: 99 %
+   Sat 15.11. 15:43 @Sehnsucht nach Sandin Spielfilm Deutschland 2001
+   Sat 15.11. 15:46 @Das Schweigen der Quandts Dokumentation Deutschland 2007
+     tuned to  101 - Das Erste
+     tuned to  104 - arte
+     tuned to  118 - EinsFestival
+     tuned to  120 - Phoenix
+
+   --- Device 3  ---
+   terrestrial card (Afatech AF9013 DVB-T)
+   signal: 100 %, s/n: 0 %
+   Sat 15.11. 15:47 @Unbekanntes Ruhrgebiet
+     tuned to  103 - WDR Düsseldorf
+     tuned to  125 - WDR Duisburg
+     tuned to  126 - WDR Wuppertal *
+     tuned to  136 - SWR Fernsehen RP
+     tuned to  137 - NDR FS NDS *
+     tuned to  138 - MDR S-Anhalt
+
+   no recordings         no strength          no channels
+
+Nicht jeder Treiber gibt die Werte für Signalstärke und Rauschabstand zurück. 
+In so einem Fall (wie beim Gerät 3) sind die Angaben dann, äh, unplausibel. 
+Der angezeigt Name kommt ebenfalls vom Treiber; mithin wird oft der Name des 
+Chipsatzes des Tuners angezeigt und nicht den der Karte selber.

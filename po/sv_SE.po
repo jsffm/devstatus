@@ -7,8 +7,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: VDR 1.5.7\n"
-"Report-Msgid-Bugs-To: <vdr@constabel.net>\n"
-"POT-Creation-Date: 2008-11-15 15:16+0100\n"
+"Report-Msgid-Bugs-To: <koch@u32.de>\n"
+"POT-Creation-Date: 2008-11-17 22:50+0100\n"
 "PO-Revision-Date: 2007-08-18 21:11+0200\n"
 "Last-Translator: Tomas Prybil <tomas@prybil.se>\n"
 "Language-Team: <vdr@linuxtv.org>\n"
@@ -20,7 +20,7 @@ msgstr ""
 msgid "Status of dvb devices"
 msgstr ""
 
-#: devstatus.c:18 devstatus.c:139
+#: devstatus.c:18 devstatus.c:147
 msgid "Device status"
 msgstr ""
 
@@ -40,64 +40,73 @@ msgstr ""
 msgid "unknown cardtype"
 msgstr ""
 
-#: devstatus.c:130
+#: devstatus.c:138
 #, c-format
 msgid "signal: %d %%, s/n: %d %%"
 msgstr ""
 
-#: devstatus.c:153 devstatus.c:382
+#: devstatus.c:162 devstatus.c:425
 msgid "device with decoder"
 msgstr ""
 
-#: devstatus.c:153 devstatus.c:382
+#: devstatus.c:164 devstatus.c:425
 msgid "primary device"
 msgstr ""
 
-#: devstatus.c:155 devstatus.c:383 devstatus.c:418
+#: devstatus.c:168 devstatus.c:426 devstatus.c:461
 msgid "Device"
 msgstr ""
 
-#: devstatus.c:174 devstatus.c:403
+#: devstatus.c:170
+msgid "-- Live"
+msgstr ""
+
+#: devstatus.c:191 devstatus.c:446
 msgid "currently no recordings"
 msgstr ""
 
-#: devstatus.c:190
+#: devstatus.c:208
 #, c-format
-msgid "  tuned to  %d - %s"
+msgid "  tuned to %4d + %s"
 msgstr ""
 
-#: devstatus.c:214
+#: devstatus.c:210
+#, c-format
+msgid "  tuned to %4d - %s"
+msgstr ""
+
+#: devstatus.c:235
 msgid "no recordings"
 msgstr ""
 
-#: devstatus.c:214
+#: devstatus.c:235
 msgid "recordings"
 msgstr ""
 
-#: devstatus.c:215
+#: devstatus.c:236
 msgid "no strength"
 msgstr ""
 
-#: devstatus.c:215
+#: devstatus.c:236
 msgid "strength"
 msgstr ""
 
-#: devstatus.c:216
+#: devstatus.c:237
 msgid "channels"
 msgstr ""
 
-#: devstatus.c:216
+#: devstatus.c:237
 msgid "no channels"
 msgstr ""
 
-#: devstatus.c:217
-msgid " "
+#: devstatus.c:238
+msgid "Refresh display"
 msgstr ""
 
-#: devstatus.c:375
+#: devstatus.c:418
 msgid "List of DVB devices"
 msgstr ""
 
-#: devstatus.c:413
+#: devstatus.c:456
 msgid "Number of concurrent recordings"
 msgstr ""

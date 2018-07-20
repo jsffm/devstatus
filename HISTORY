@@ -1,6 +1,17 @@
 VDR Plugin 'devstatus' Revision History
 ---------------------------------------
 
+2008-11-15: Version 0.2.0
+
+- The tuned channel are selectable; pressing ok will switch the channel; 
+  pressing 7 or the channel down key will tune one channel down, 
+  pressing 9 or the channel up will tune it up
+- the tuned channel ist marked with a plus sign
+- the actual used card is marked with the text "live"
+- the blue key will refresh the display (for new signal values)
+
+
 2008-11-15: Version 0.1.0
 
 - Initial revision.
+

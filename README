@@ -1,6 +1,6 @@
 This is a "plugin" for the Video Disk Recorder (VDR).
 
-Written by:                  Walter Koch <koch @ u32 dot de>
+Written by:                  Walter Koch <koch@u32.de>
 
 Project's homepage:          http://www.u32.de/vdr.html#devstatus
 
@@ -8,7 +8,8 @@ Latest version available at: http://www.u32.de/vdr.html#devstatus
 
 See the file COPYING for license information.
 
-Description:
+
+Description (version 0.2.0):
 
 This is a simple plugin, that displays the status of the
 available dvb devices. This maybe helps in case of driver
@@ -16,21 +17,29 @@ problems.
 For every device it is shown
 * its type (DVB-T, DVB-C (not tested), DVB-S)
 * its name 
+* its /dev path (/dev/dvb/adapter*)
 * its current recordings with their start time and title. 
   Selecting a recording and pressing 'ok' starts it for
   timeshift viewing.
   Press the red key to toggle the recordings display. 
 * the channels the device is currently tuned to. 
+  The live channel is marked with a plus sign. 
+  The channels are selectable; pressing OK switches to this channel 
+  (without leaving the plugin). Pressing ChannelUp or ChannelDown
+  will change to the next transponder. The keys "7" and "9"
+  have the same purpose.
   Press the yellow key to toggle the channel display. 
 * the signal strength and the signal / noise ratio of
   the device. Hint: Some devices do not provide this info.
   Press the green key to toggle the signal display. 
+  Press the blue key to refresh the screen (and thus the values)
+* The actual used card ist marked with the text "live" 
   
 This plugin is heavily based  on the recstatus plugin by 
 Christian Wieninger and Mike Constabel 
 (http://www.constabel.net/vdr/plugins.de.htm). 
-To be honest: devstatus is a renamed version with only 
-few additional code. I changed the name to "devstatus" 
+To cry it out loudly: devstatus is a renamed version with
+additional code. I changed the name to "devstatus" 
 because three of four information this plugin provides 
 aren't connected to recordings anymore.
 
@@ -39,41 +48,43 @@ I used also some code from the femon plugin
 
 
 Example output:
-                                    Device status
+                                             Device status
 
-    --- Device 1  (device with decoder, primary device) ---
-    satellite card (ST STV0299 DVB-S)
-    signal: 72 %, s/n: 85 %
+    --- Device 1 -- Live  (device with decoder, primary device) ---
+    satellite card (ST STV0299 DVB-S) - /dev/dvb/adapter0
+    signal: 63 %, s/n: 77 %
     currently no recordings
-      tuned to  4 - arte
-      tuned to  23 - EinsFestival
-      tuned to  24 - EinsExtra
-      tuned to  25 - EinsPlus
-      tuned to  29 - Phoenix
+      tuned to    2 - ZDF
+      tuned to    5 - 3sat
+      tuned to   22 + KiKa
+      tuned to   26 - ZDFtheaterkanal
+      tuned to   27 - ZDFdokukanal
+      tuned to   28 - ZDFinfokanal
+      tuned to  504 - DKULTUR
+      tuned to  505 - DLF
+      tuned to  517 - Dok&Deb
 
-    --- Device 2  ---
-    terrestrial card (Philips TDA10045H DVB-T)
+    --- Device 2   ---
+    terrestrial card (Philips TDA10045H DVB-T) - /dev/dvb/adapter1
     signal: 80 %, s/n: 99 %
-    Sat 15.11. 15:43 @Sehnsucht nach Sandin Spielfilm Deutschland 2001
-    Sat 15.11. 15:46 @Das Schweigen der Quandts Dokumentation Deutschland 2007
+    currently no recordings
       tuned to  101 - Das Erste
       tuned to  104 - arte
       tuned to  118 - EinsFestival
       tuned to  120 - Phoenix
 
-    --- Device 3  ---
-    terrestrial card (Afatech AF9013 DVB-T)
+    --- Device 3   ---
+    terrestrial card (Afatech AF9013 DVB-T) - /dev/dvb/adapter2
     signal: 100 %, s/n: 0 %
-    Sat 15.11. 15:47 @Unbekanntes Ruhrgebiet
-      tuned to  103 - WDR Düsseldorf
-      tuned to  125 - WDR Duisburg
-      tuned to  126 - WDR Wuppertal *
-      tuned to  136 - SWR Fernsehen RP
-      tuned to  137 - NDR FS NDS *
-      tuned to  138 - MDR S-Anhalt
+    Mon 17.11. 23:01 @Ein starker Abgang
+      tuned to  102 - ZDF
+      tuned to  105 - 3sat
+      tuned to  117 - Doku/KiKa
+      tuned to  119 - ZDFinfokanal
 
 
-    no recordings         no strength          no channels
+
+    no recordings           no strength            no channels          Refresh display
 
 
 ----

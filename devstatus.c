@@ -13,7 +13,7 @@
 #include <vdr/menu.h>
 #include "i18n.h"
 
-static const char *VERSION        = "0.1.0";
+static const char *VERSION        = "0.2.0";
 static const char *DESCRIPTION    = trNOOP("Status of dvb devices");
 static const char *MAINMENUENTRY  = trNOOP("Device status");
 
@@ -77,8 +77,10 @@ cList<cRecObj> CurrentRecordings;
 class cMenuRecItem : public cOsdItem {
   char *Name;
 public: 
+  int ChannelNr; 
   cMenuRecItem(const char* name) { 
           Name = NULL;
+          ChannelNr = 0;
           if (name) {  Name = strdup(name); SetText(Name, false); }
   }
   cMenuRecItem(const cRecObj* r) { 
@@ -90,7 +92,9 @@ public:
               SetText(itemText, false); 
           }
   }
-  char* RecName() { return Name; }
+  char* RecName()  { return Name; }
+  int GetChannelNr()  { return ChannelNr; }
+  bool IsChannel() { return ChannelNr != 0; }
 };
 
 
@@ -120,7 +124,11 @@ public:
         CHECK(ioctl(m_Frontend, FE_READ_BER, &ber));
         close(m_Frontend);
 
-        asprintf(&output, "%s (%s)", cardtypeAsString(m_FrontendInfo.type), m_FrontendInfo.name);
+        asprintf(&output, "%s (%s) - /dev/dvb/adapter%d", 
+                          cardtypeAsString(m_FrontendInfo.type), 
+                          m_FrontendInfo.name,
+                          d->CardIndex()
+        );
         cMenuRecItem* norec =  new cMenuRecItem(output);
         norec->SetSelectable(false);
         Add(norec);
@@ -143,16 +151,25 @@ public:
 
     void Write (void)
       {
-          Clear();
+          Clear(); // clear OSD
           for (int i = 0; i < cDevice::NumDevices(); i++) 
           {
               cDevice *d = cDevice::GetDevice(i);
               char* devName = NULL;
               char* devInfo = NULL;
               if (d->HasDecoder() || d->IsPrimaryDevice())
-                  asprintf(&devInfo, " (%s%s%s)", d->HasDecoder() ? tr("device with decoder") : "", (d->HasDecoder() && d->IsPrimaryDevice()) ? ", " : "", d->IsPrimaryDevice() ? tr("primary device") : "");
+                  asprintf(&devInfo, " (%s%s%s)", 
+                    d->HasDecoder() ? tr("device with decoder") : "", 
+                    (d->HasDecoder() && d->IsPrimaryDevice()) ? ", " : "", 
+                    d->IsPrimaryDevice() ? tr("primary device") : ""
+                  );
              
-              asprintf(&devName, "--- %s %d %s ---", tr("Device"), i+1, devInfo ? devInfo : "") ;
+              asprintf(&devName, "--- %s %d %s %s ---",
+                        tr("Device"), 
+                        i+1, 
+                        (i == cDevice::ActualDevice()->CardIndex()) ? tr("-- Live"):"",
+                        devInfo ? devInfo : ""
+              ) ;
               cMenuRecItem* DeviceHeader =  new cMenuRecItem(devName);
               DeviceHeader->SetSelectable(true);
               Add(DeviceHeader);
@@ -177,8 +194,8 @@ public:
                   }
               }
 
-              if (showChannels) {
                      
+              if (showChannels) {
                  cMenuRecItem* norec = NULL;
                  char* output = NULL;
                  int channelNo;
@@ -187,9 +204,13 @@ public:
                  for (channelNo = 1; channelNo <= Channels.MaxNumber(); channelNo++) {
                     if( (channel = Channels.GetByNumber(channelNo)) ) {
                        if (d->IsTunedToTransponder(channel)) {
-                           asprintf(&output, tr("  tuned to  %d - %s"), channelNo, channel->Name() );
+                           if( channelNo == d->CurrentChannel()) 
+                              asprintf(&output, tr("  tuned to %4d + %s"), channelNo, channel->Name() );
+                           else 
+                              asprintf(&output, tr("  tuned to %4d - %s"), channelNo, channel->Name() );
                            norec = new cMenuRecItem(output);
-                           norec->SetSelectable(false);
+                           norec->ChannelNr = channelNo;
+                           norec->SetSelectable(true);
                            Add(norec);
                            free(output);
                        }
@@ -214,7 +235,7 @@ public:
           SetHelp( showRecordings ? tr("no recordings"):tr("recordings"), 
                    showStrength   ? tr("no strength")  :tr("strength"),
                    showChannels   ? tr("no channels")  :tr("channels"), 
-                   tr(" ") 
+                   tr("Refresh display")
                  );
           Display();       
           
@@ -231,8 +252,10 @@ public:
             cReplayControl::SetRecording(recordingFound->FileName(), recordingFound->Title());
             return osReplay;
         }
+
     eOSState ProcessKey(eKeys Key)
         {
+            cMenuRecItem *ri;
             eOSState state = cOsdMenu::ProcessKey(Key);     
             if (state == osUnknown) 
             {
@@ -251,10 +274,30 @@ public:
                         Write();
                         break;
                   case kBlue:
-                  case kOk: { 
-                        cMenuRecItem *ri = (cMenuRecItem*)Get(Current());
+                        Write();
+                        break;
+                  case kChanUp:
+                  case kChanDn: 
+                  case k7: 
+                  case k9:
+                        ri = (cMenuRecItem*)Get(Current());
                         if (ri->Selectable())
-                            return Play(ri->RecName());
+                            if (ri->IsChannel()) {
+                                Channels.SwitchTo(ri->GetChannelNr() + ((Key==k9)||(Key==kChanUp)? 1:-1) );
+                                Write(); //repaint; maybe 'Live' has changed
+                                return osContinue;
+                            }
+                        break;
+                       
+                  case kOk: { 
+                        ri = (cMenuRecItem*)Get(Current());
+                        if (ri->Selectable())
+                            if (ri->IsChannel()) {
+                                Channels.SwitchTo(ri->GetChannelNr());
+                                Write(); //repaint; maybe 'Live' has changed
+                                return osContinue;
+                            } else 
+                                return Play(ri->RecName());
                         break;
                         }
                   default:

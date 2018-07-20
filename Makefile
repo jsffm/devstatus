@@ -81,7 +81,7 @@ endif
 	msgfmt -c -o $@ $<
 
 $(I18Npot): $(wildcard *.c)
-	xgettext -C -cTRANSLATORS --no-wrap -F -k -ktr -ktrNOOP --msgid-bugs-address='<vdr@constabel.net>' -o $@ $(wildcard *.c)
+	xgettext -C -cTRANSLATORS --no-wrap -F -k -ktr -ktrNOOP --msgid-bugs-address='<koch@u32.de>' -o $@ $(wildcard *.c)
 
 $(I18Npo): $(I18Npot)
 	msgmerge -U --no-wrap -F --backup=none -q $@ $<
