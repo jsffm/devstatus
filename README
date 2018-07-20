@@ -9,11 +9,11 @@ Latest version available at: http://www.u32.de/vdr.html#devstatus
 See the file COPYING for license information.
 
 
-Description (version 0.4.0):
+Description (version 0.5.0):
 
 This simple plugin displays the status of all
 available dvb devices. This could in case of driver
-problems. It should works with vdr 1.6.x and maybe 1.7.x,
+problems. It should works with vdr 2.4.x and maybe 2.2.x,
 but not with 1.5.x or earlier. 
 
 For every dvb device known to vdr it shows

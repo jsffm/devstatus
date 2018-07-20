@@ -14,7 +14,7 @@
 #include <vdr/i18n.h>
 
 
-static const char *VERSION        = "0.4.1";
+static const char *VERSION        = "0.5.0";
 static const char *DESCRIPTION    = trNOOP("Status of dvb devices");
 static const char *MAINMENUENTRY  = trNOOP("Device status");
 
@@ -215,12 +215,12 @@ public:
            return;
         }
         int rcfe  = ioctl(m_Frontend, FE_GET_INFO, &m_FrontendInfo);
-	// CHECK(ioctl(m_Frontend, FE_READ_STATUS, &status));
+        // CHECK(ioctl(m_Frontend, FE_READ_STATUS, &status));
         // CHECK(ioctl(m_Frontend, FE_READ_BER, &ber));
         close(m_Frontend);
 
-	signal = d->SignalStrength();
-	snr = d->SignalQuality();
+        signal = d->SignalStrength();
+        snr = d->SignalQuality();
 
         // 2. line type (name) - devpath
         if( rcfe == 0 ) {
