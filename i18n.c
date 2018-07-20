@@ -7,6 +7,8 @@
 
 #include "i18n.h"
 
+#if APIVERSNUM < 10507
+
 const tI18nPhrase Phrases[] = {
   { "display the current recordings on each device",
     "Anzeige der laufenden Aufnahmen je Gerät",// Deutsch
@@ -185,3 +187,5 @@ const tI18nPhrase Phrases[] = {
   },
   { NULL }
   };
+
+#endif

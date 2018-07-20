@@ -10,9 +10,9 @@
 #include <vdr/menu.h>
 #include "i18n.h"
 
-static const char *VERSION        = "0.0.4";
-static const char *DESCRIPTION    = "recording status monitor";
-static const char *MAINMENUENTRY  = "Recording status";
+static const char *VERSION        = "0.0.5";
+static const char *DESCRIPTION    = trNOOP("recording status monitor");
+static const char *MAINMENUENTRY  = trNOOP("Recording status");
 
 #undef DAYDATETIMESTRING
 #if VDRVERSNUM >= 10318
@@ -159,7 +159,7 @@ public:
   cPluginRecstatus(void);
   virtual ~cPluginRecstatus();
   virtual const char *Version(void) { return VERSION; }
-  virtual const char *Description(void) { return DESCRIPTION; }
+  virtual const char *Description(void) { return tr(DESCRIPTION); }
   virtual const char *CommandLineHelp(void);
   virtual bool ProcessArgs(int argc, char *argv[]);
   virtual bool Initialize(void);
@@ -199,7 +199,9 @@ bool cPluginRecstatus::ProcessArgs(int argc, char *argv[])
 
 bool cPluginRecstatus::Initialize(void)
 {
-  RegisterI18n(Phrases);
+#if APIVERSNUM < 10507
+   RegisterI18n(Phrases);
+#endif
   return true;
 }
 

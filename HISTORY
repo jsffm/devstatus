@@ -1,6 +1,11 @@
 VDR Plugin 'recstatus' Revision History
 ---------------------------------------
 
+2007-09-03: Version 0.0.5
+
+- full support for new i18n system in vdr>=1.5.7, but also fully backwards
+  compatible. Thanks to Christian Wieninger.
+
 2007-01-15: Version 0.0.4
 
 - added spanish translation, thanks to bittor from open7x0.org
