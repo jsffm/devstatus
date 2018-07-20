@@ -1,5 +1,6 @@
 #
 # Makefile for a Video Disk Recorder plugin
+# Adapted to the new VDR makefile environment by Stefan Hofmann
 #
 # $Id$
 
@@ -13,48 +14,52 @@ PLUGIN = devstatus
 
 VERSION = $(shell grep 'static const char \*VERSION *=' $(PLUGIN).c | awk '{ print $$6 }' | sed -e 's/[";]//g')
 
-### The C++ compiler and options:
-
-OPTLEVEL ?= 2
-CXXFLAGS = -O$(OPTLEVEL) -Wall -Woverloaded-virtual
-
 ### The directory environment:
 
-VDRDIR = ../../..
-LIBDIR = ../../lib
-TMPDIR = /tmp
+# Use package data if installed...otherwise assume we're under the VDR source directory:
+PKGCFG = $(if $(VDRDIR),$(shell pkg-config --variable=$(1) $(VDRDIR)/vdr.pc),$(shell pkg-config --variable=$(1) vdr || pkg-config --variable=$(1) ../../../vdr.pc))
+LIBDIR = $(call PKGCFG,libdir)
+LOCDIR = $(call PKGCFG,locdir)
+#
+TMPDIR ?= /tmp
 
-### Allow user defined options to overwrite defaults:
+### The compiler options:
 
--include $(VDRDIR)/Make.config
+export CFLAGS   = $(call PKGCFG,cflags)
+export CXXFLAGS = $(call PKGCFG,cxxflags)
+override CXXFLAGS += -Wno-unused-result
 
-# Strip debug symbols?  Set eg. to /bin/true if not
-STRIP = strip
+### The version number of VDR's plugin API:
 
-
-### The version number of VDR's plugin API (taken from VDR's "config.h"):
-
-APIVERSION = $(shell sed -ne '/define APIVERSION/s/^.*"\(.*\)".*$$/\1/p' $(VDRDIR)/config.h)
+APIVERSION = $(call PKGCFG,apiversion)
 
 ### The name of the distribution archive:
 
 ARCHIVE = $(PLUGIN)-$(VERSION)
 PACKAGE = vdr-$(ARCHIVE)
 
+### The name of the shared object file:
+
+SOFILE = libvdr-$(PLUGIN).so
+
 ### Includes and Defines (add further entries here):
 
-INCLUDES += -I$(VDRDIR)/include -I$(DVBDIR)/include
+INCLUDES += 
 
-DEFINES += -D_GNU_SOURCE -DPLUGIN_NAME_I18N='"$(PLUGIN)"'
+DEFINES += -DPLUGIN_NAME_I18N='"$(PLUGIN)"'
 
 ### The object files (add further files here):
 
-OBJS = $(PLUGIN).o 
+OBJS = $(PLUGIN).o
+
+### The main target:
+
+all: $(SOFILE) i18n
 
 ### Implicit rules:
 
 %.o: %.c
-	$(CXX) $(CXXFLAGS) -c $(DEFINES) $(INCLUDES) $<
+	$(CXX) $(CXXFLAGS) -c $(DEFINES) $(INCLUDES) -o $@ $<
 
 ### Dependencies:
 
@@ -68,41 +73,40 @@ $(DEPFILE): Makefile
 ### Internationalization (I18N):
 
 PODIR     = po
-LOCALEDIR = $(VDRDIR)/locale
 I18Npo    = $(wildcard $(PODIR)/*.po)
 I18Nmo    = $(addsuffix .mo, $(foreach file, $(I18Npo), $(basename $(file))))
-I18Ndirs  = $(notdir $(foreach file, $(I18Npo), $(basename $(file))))
+I18Nmsgs  = $(addprefix $(DESTDIR)$(LOCDIR)/, $(addsuffix /LC_MESSAGES/vdr-$(PLUGIN).mo, $(notdir $(foreach file, $(I18Npo), $(basename $(file))))))
 I18Npot   = $(PODIR)/$(PLUGIN).pot
-I18Nvdrmo = vdr-$(PLUGIN).mo
 
 %.mo: %.po
 	msgfmt -c -o $@ $<
 
 $(I18Npot): $(wildcard *.c)
-	xgettext -C -cTRANSLATORS --no-wrap -F -k -ktr -ktrNOOP --msgid-bugs-address='<koch@u32.de>' -o $@ $(wildcard *.c)
+	xgettext -C -cTRANSLATORS --no-wrap --no-location -k -ktr -ktrNOOP --package-name=vdr-$(PLUGIN) --package-version=$(VERSION) --msgid-bugs-address='<koch@u32.de>' -o $@ `ls $^`
 
-$(I18Npo): $(I18Npot)
-	msgmerge -U --no-wrap -F --backup=none -q $@ $<
+%.po: $(I18Npot)
+	msgmerge -U --no-wrap --no-location --backup=none -q -N $@ $<
 	@touch $@
 
-i18n: $(I18Nmo)
-	@mkdir -p $(LOCALEDIR)
-	for i in $(I18Ndirs); do\
-	    mkdir -p $(LOCALEDIR)/$$i/LC_MESSAGES;\
-	    cp $(PODIR)/$$i.mo $(LOCALEDIR)/$$i/LC_MESSAGES/$(I18Nvdrmo);\
-	    done
+$(I18Nmsgs): $(DESTDIR)$(LOCDIR)/%/LC_MESSAGES/vdr-$(PLUGIN).mo: $(PODIR)/%.mo
+	install -D -m644 $< $@
 
+.PHONY: i18n
+i18n: $(I18Nmo) $(I18Npot)
+
+install-i18n: $(I18Nmsgs)
 
 ### Targets:
 
-all: libvdr-$(PLUGIN).so i18n
+$(SOFILE): $(OBJS)
+	$(CXX) $(CXXFLAGS) $(LDFLAGS) -shared $(OBJS) -o $@
 
-libvdr-$(PLUGIN).so: $(OBJS)
-	$(CXX) $(CXXFLAGS) -shared $(OBJS) -o $@
-	@$(STRIP) $@
-	@cp --remove-destination $@ $(LIBDIR)/$@.$(APIVERSION)
+install-lib: $(SOFILE)
+	install -D $^ $(DESTDIR)$(LIBDIR)/$^.$(APIVERSION)
 
-dist: clean
+install: install-lib install-i18n
+
+dist: $(I18Npo) clean
 	@-rm -rf $(TMPDIR)/$(ARCHIVE)
 	@mkdir $(TMPDIR)/$(ARCHIVE)
 	@cp -a * $(TMPDIR)/$(ARCHIVE)
@@ -113,4 +117,3 @@ dist: clean
 clean:
 	@-rm -f $(PODIR)/*.mo $(PODIR)/*.pot
 	@-rm -f $(OBJS) $(DEPFILE) *.so *.tgz core* *~
-
