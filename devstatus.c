@@ -51,12 +51,24 @@ int getFrequencyMHz(int value) {
    return ret;
 }
 
+#if VDRVERSNUM >= 20301
+const cChannel* getTunedChannel(cDevice *d)  {
+#else
 cChannel* getTunedChannel(cDevice *d)  {
+#endif
    int channelNo;
+#if VDRVERSNUM >= 20301
+   LOCK_CHANNELS_READ;
+   const cChannel *channel = NULL;
+
+   for (channelNo = 1; channelNo <= Channels->MaxNumber(); channelNo++) {
+      if( (channel = Channels->GetByNumber(channelNo)) ) {
+#else
    cChannel *channel = NULL;
 
    for (channelNo = 1; channelNo <= Channels.MaxNumber(); channelNo++) {
       if( (channel = Channels.GetByNumber(channelNo)) ) {
+#endif
          if (d->IsTunedToTransponder(channel)) {
            return channel;
          }
@@ -66,20 +78,36 @@ cChannel* getTunedChannel(cDevice *d)  {
 }
 
 int getTunedFrequency (cDevice *device) {
+#if VDRVERSNUM >= 20301
+    const cChannel *tunedChannel = getTunedChannel(device);
+#else
     cChannel *tunedChannel = getTunedChannel(device);
+#endif
     return tunedChannel ? tunedChannel->Frequency() : 0;
 }
 
-
+#if VDRVERSNUM >= 20301
+const cChannel* nextTransponderChannel( cDevice *device, int direction) {
+#else
 cChannel* nextTransponderChannel( cDevice *device, int direction) {
+#endif
 // search for the next transponder (direction=1) or the previous one (-1) 
    int channelNo;
+   int oldQRG = getTunedFrequency(device);
+#if VDRVERSNUM >= 20301
+   const cChannel *channel = NULL;
+   const cChannel *resChannel = NULL;
+
+   LOCK_CHANNELS_READ;
+   for (channelNo = 1; channelNo <= Channels->MaxNumber(); channelNo++) {
+      if( (channel = Channels->GetByNumber(channelNo)) ) {
+#else
    cChannel *channel = NULL;
    cChannel *resChannel = NULL;
-   int oldQRG = getTunedFrequency(device);
-            
+
    for (channelNo = 1; channelNo <= Channels.MaxNumber(); channelNo++) {
       if( (channel = Channels.GetByNumber(channelNo)) ) {
+#endif
           if( device->ProvidesSource( channel->Source() ) ) { // same source (DVB-T, -S, ...)
              if( !ISTRANSPONDER(channel->Frequency(),oldQRG) ) {  //not the same transponder
                if( channel->Frequency()*direction > oldQRG*direction ) {  
@@ -102,9 +130,15 @@ class cRecObj : public cListObject {
 public:
     char* name;
     const cDevice* device;
+#if VDRVERSNUM >= 20301
+    const cTimer* timer;
+public:
+    cRecObj(const char* Name, const cDevice* Device, const cTimer* Timer) {
+#else
     cTimer* timer;
 public:
     cRecObj(const char* Name, const cDevice* Device, cTimer* Timer) {
+#endif
             name = strdup(Name);
             device = Device;
             timer = Timer;
@@ -152,7 +186,11 @@ public:
   int GetChannelNr()  { return ChannelNr; }
   bool IsChannel() { return ChannelNr != 0; }
   bool HasDevice() { return DeviceNr >= 0; }
+#if VDRVERSNUM >= 20301
+  const cChannel* GetChannel()  { LOCK_CHANNELS_READ; return Channels->GetByNumber(ChannelNr); }
+#else
   cChannel* GetChannel()  { return Channels.GetByNumber(ChannelNr); }
+#endif
   cDevice* GetDevice() { return cDevice::GetDevice(DeviceNr); };
 };
 
@@ -273,10 +311,18 @@ public:
                  cMenuRecItem* norec = NULL;
                  char* output = NULL;
                  int channelNo;
+#if VDRVERSNUM >= 20301
+                 LOCK_CHANNELS_READ;
+                 const cChannel *channel = NULL;
+
+                 for (channelNo = 1; channelNo <= Channels->MaxNumber(); channelNo++) {
+                    if( (channel = Channels->GetByNumber(channelNo)) ) {
+#else
                  cChannel *channel = NULL;
-       
+
                  for (channelNo = 1; channelNo <= Channels.MaxNumber(); channelNo++) {
                     if( (channel = Channels.GetByNumber(channelNo)) ) {
+#endif
                        if (d->IsTunedToTransponder(channel)) {
                             bool currentLive = channelNo == d->CurrentChannel() 
                                                && (i == cDevice::ActualDevice()->CardIndex());
@@ -345,8 +391,14 @@ public:
 
     eOSState Play(char* file) {
             // Play the selected recording 
+#if VDRVERSNUM >= 20301
+            const cRecording* recordingFound = NULL;
+            LOCK_RECORDINGS_READ;
+            for(const cRecording* recording = Recordings->First(); recording; recording = Recordings->Next(recording))
+#else
             cRecording* recordingFound = NULL;
             for(cRecording* recording = Recordings.First(); recording; recording = Recordings.Next(recording))
+#endif
                 if (strstr(recording->Title(), file))
                     recordingFound = recording;
             if (!recordingFound)
@@ -380,7 +432,11 @@ public:
                     ri = (cMenuRecItem*)Get(Current());
                     if( ri->Selectable() & ri->HasDevice() ) {
 
+#if VDRVERSNUM >= 20301
+                        const cChannel *newChannel = nextTransponderChannel(
+#else
                         cChannel *newChannel = nextTransponderChannel(
+#endif
                             ri->GetDevice(), ((Key==k9)||(Key==kChanUp)? 1:-1)
                         );
                         if( newChannel != NULL ) 
@@ -397,7 +453,12 @@ public:
                     ri = (cMenuRecItem*)Get(Current());
                     if (ri->Selectable()) {
                         if (ri->IsChannel()) {
+#if VDRVERSNUM >= 20301
+                            LOCK_CHANNELS_WRITE;
+                            Channels->SwitchTo(ri->GetChannelNr());
+#else
                             Channels.SwitchTo(ri->GetChannelNr());
+#endif
                             Write(); //repaint; maybe 'Live' has changed
                             return osContinue;
                         } else
@@ -629,7 +690,12 @@ void cDevStatusMonitor::Recording(const cDevice *Device, const char *Name) {
 #endif
     if (Name) {
         // insert new timers currently recording in TimersRecording
+#if VDRVERSNUM >= 20301
+        LOCK_TIMERS_READ;
+        for (const cTimer *ti = Timers->First(); ti; ti = Timers->Next(ti))
+#else
         for (cTimer *ti = Timers.First(); ti; ti = Timers.Next(ti))
+#endif
             if (ti->Recording()) {
                 // check if this is a new entry
                 bool bFound = false;
