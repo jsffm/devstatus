@@ -10,7 +10,7 @@ msgstr ""
 "Project-Id-Version: VDR 1.5.7\n"
 "Report-Msgid-Bugs-To: <koch@u32.de>\n"
 "POT-Creation-Date: 2009-02-14 15:31+0100\n"
-"PO-Revision-Date: 2009-02-09 23:48+0100\n"
+"PO-Revision-Date: 2009-02-15 00:59+0100\n"
 "Last-Translator: Diego Pierotto <vdr-italian@tiscali.it>\n"
 "Language-Team:  <vdr@linuxtv.org>\n"
 "MIME-Version: 1.0\n"
@@ -24,7 +24,8 @@ msgstr ""
 msgid "Status of dvb devices"
 msgstr "Stato schede DVB"
 
-#: devstatus.c:19 devstatus.c:217
+#: devstatus.c:19
+#: devstatus.c:217
 msgid "Device status"
 msgstr "Stato scheda"
 
@@ -54,15 +55,19 @@ msgstr "Frequenza: %d MHz, Segnale: %d%%, s/n: %d%%"
 msgid "no signal information available (rc=%d)"
 msgstr "Nessuna info di segnale disponibile (rc=%d)"
 
-#: devstatus.c:232 devstatus.c:563
+#: devstatus.c:232
+#: devstatus.c:563
 msgid "device with decoder"
 msgstr "sch. con decoder"
 
-#: devstatus.c:234 devstatus.c:563
+#: devstatus.c:234
+#: devstatus.c:563
 msgid "primary device"
 msgstr "sch. primaria"
 
-#: devstatus.c:238 devstatus.c:564 devstatus.c:599
+#: devstatus.c:238
+#: devstatus.c:564
+#: devstatus.c:599
 msgid "Device"
 msgstr "Scheda"
 
@@ -70,50 +75,51 @@ msgstr "Scheda"
 msgid "-- Live"
 msgstr "-- Dal vivo"
 
-#: devstatus.c:265 devstatus.c:584
+#: devstatus.c:265
+#: devstatus.c:584
 msgid "currently no recordings"
 msgstr "Nessuna registrazione in corso"
 
 #. TRANSLATORS: printf string for channel line
 #: devstatus.c:284
-#, fuzzy, c-format
+#, c-format
 msgid "%5d  %s %s  %s  %s%s%s"
-msgstr "  %4d %s %s"
+msgstr "%5d  %s %s  %s  %s%s%s"
 
 #. TRANSLATORS: abbr. for tv-channels
 #: devstatus.c:288
 msgid "t"
-msgstr ""
+msgstr "t"
 
 #. TRANSLATORS: abbr. for video only-channels
 #: devstatus.c:290
 msgid "v"
-msgstr ""
+msgstr "v"
 
 #. TRANSLATORS: abbr. for radio-channels
 #: devstatus.c:292
 msgid "r"
-msgstr ""
+msgstr "r"
 
 #. TRANSLATORS: abbr. for no signal-channels
 #: devstatus.c:294
 msgid "-"
-msgstr ""
+msgstr "-"
 
 #. TRANSLATORS: abbr. for live channel
 #: devstatus.c:297
 msgid "+"
-msgstr ""
+msgstr "+"
 
 #. TRANSLATORS: abbr. for crypted channels
 #: devstatus.c:299
 msgid "x"
-msgstr ""
+msgstr "x"
 
 #. TRANSLATORS: abbr. for FTA channels
 #: devstatus.c:301
 msgid " "
-msgstr ""
+msgstr " "
 
 #: devstatus.c:335
 msgid "no recordings"
@@ -156,9 +162,8 @@ msgid "Show channels"
 msgstr "Mostra canali"
 
 #: devstatus.c:470
-#, fuzzy
 msgid "Show channel provider"
-msgstr "Mostra canali"
+msgstr "Mostra emittente"
 
 #: devstatus.c:557
 msgid "List of DVB devices"

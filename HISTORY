@@ -1,9 +1,16 @@
 VDR Plugin 'devstatus' Revision History
 ---------------------------------------
 
+2009-02-18: Version 0.4.1
+- updated italian translation 
+  (tnx to Diego Pierotto, vdr-italian at tiscali dot it)
+- updated russian translation 
+  (tnx to .g.prosat at tochka dot ru )
+
+
 2009-02-14: Version 0.4.0  ("Pinky")
 - updated italian translation 
-  (tnx to Diego Pierotto, vdr-italian at tiscali.it)
+  (tnx to Diego Pierotto, vdr-italian at tiscali dot it)
 - switched completely to VDR 1.6's i18n system and removed the 
   old stuff - no more support for older VDR versions
 - .so is now stripped by default 

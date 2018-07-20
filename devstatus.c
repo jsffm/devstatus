@@ -14,7 +14,7 @@
 #include <vdr/i18n.h>
 
 
-static const char *VERSION        = "0.4.0";
+static const char *VERSION        = "0.4.1";
 static const char *DESCRIPTION    = trNOOP("Status of dvb devices");
 static const char *MAINMENUENTRY  = trNOOP("Device status");
 
