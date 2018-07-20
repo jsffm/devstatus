@@ -215,10 +215,11 @@ public:
         }
         int rcfe  = ioctl(m_Frontend, FE_GET_INFO, &m_FrontendInfo);
         // CHECK(ioctl(m_Frontend, FE_READ_STATUS, &status));
-        int rcsig = ioctl(m_Frontend, FE_READ_SIGNAL_STRENGTH, &signal);
-        int rcsnr = ioctl(m_Frontend, FE_READ_SNR, &snr);
         // CHECK(ioctl(m_Frontend, FE_READ_BER, &ber));
         close(m_Frontend);
+
+	signal = d->SignalStrength();
+	snr = d->SignalQuality();
 
         // 2. line type (name) - devpath
         if( rcfe == 0 ) {
@@ -237,12 +238,12 @@ public:
 
         // 3. line strength
         if( showStrength ) {
-            if( (rcsig == 0) && (rcsnr == 0) && ((signal > 0) || (snr>0)) ) {
+            if( (signal > 0) || (snr>0)) {
                 asprintf(&output, tr("frequency: %d MHz, signal: %d%%, s/n: %d%%"), 
                                      getFrequencyMHz (getTunedFrequency(d)) ,
-                                     signal / 655, snr / 655);
+                                     signal, snr);
             } else {
-                asprintf(&output, tr("no signal information available (rc=%d)"), rcsig );
+                asprintf(&output, tr("no signal information available"));
             }
                           
             norec =  new cMenuRecItem(output);
@@ -454,7 +455,7 @@ public:
                     if (ri->Selectable()) {
                         if (ri->IsChannel()) {
 #if VDRVERSNUM >= 20301
-                            LOCK_CHANNELS_WRITE;
+                            LOCK_CHANNELS_READ;
                             Channels->SwitchTo(ri->GetChannelNr());
 #else
                             Channels.SwitchTo(ri->GetChannelNr());
