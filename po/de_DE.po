@@ -16,9 +16,8 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 
 #: recstatus.c:14
-#, fuzzy
 msgid "recording status monitor"
-msgstr "Aufnahmestatus"
+msgstr "Aufnahmestatus-Monitor"
 
 #: recstatus.c:15 recstatus.c:83
 msgid "Recording status"

@@ -10,15 +10,15 @@
 #if APIVERSNUM < 10507
 
 const tI18nPhrase Phrases[] = {
-  { "display the current recordings on each device",
+  { "recording status monitor",
     "Anzeige der laufenden Aufnahmen je Gerät",// Deutsch
     "",// TODO Slovenski
-    "",
+    "Mostra le registrazioni attuali su ogni scheda",// Italian
     "",// TODO Nederlands
     "",// TODO Portugues
-    "Afficher les enregistrements pour chaque carte",
+    "Afficher les enregistrements pour chaque carte",//French
     "",// TODO Norsk
-    "",
+    "tallennusten tilan seuranta",//Finnish
     "",// TODO Polski
     "Ver grabaciones actuales de cada dispositivo",// Español
     "",// TODO ÅëëçíéêÜ (Greek)
@@ -38,7 +38,7 @@ const tI18nPhrase Phrases[] = {
   { "This plugin has no info text!",
     "Dieses Plugin hat keinen Infotext!",
     "",// TODO
-    "Questo plugin non ha ulteriori informazioni",// TODO
+    "Questo plugin non ha ulteriori informazioni!",
     "",// TODO
     "",// TODO
     "Le plugin n'a pas de text d'info",
@@ -63,12 +63,12 @@ const tI18nPhrase Phrases[] = {
   { "Recording status",
     "Aufnahmestatus",
     "",// TODO
-    "",// TODO
+    "Stato registrazioni",
     "",// TODO
     "",// TODO
     "Status d'enregistrement",
     "",// TODO
-    "",
+    "Tallennusten tila",
     "",// TODO
     "Estado de la grabación",
     "",// TODO
@@ -88,12 +88,12 @@ const tI18nPhrase Phrases[] = {
   { "Device",
     "Gerät",
     "",// TODO
-    "",// TODO
+    "Scheda",
     "",// TODO
     "",// TODO
     "Carte",
     "",// TODO
-    "",
+    "Kortti",
     "",// TODO
     "Dispositivo",
     "",// TODO
@@ -113,12 +113,12 @@ const tI18nPhrase Phrases[] = {
   { "no current recordings",
     "keine laufenden Aufnahmen",
     "",// TODO
-    "",// TODO
+    "nessuna registrazione al momento",
     "",// TODO
     "",// TODO
     "pas d'enregistrement actuellement",
     "",// TODO
-    "",
+    "ei meneillään olevia tallennuksia",
     "",// TODO
     "actualmente no hay grabaciones",
     "",// TODO
@@ -138,12 +138,12 @@ const tI18nPhrase Phrases[] = {
   { "device with decoder",
     "Gerät hat Decoder",
     "",// TODO
-    "",// TODO
+    "scheda con decoder",
     "",// TODO
     "",// TODO
     "La carte a un décodeur",
     "",// TODO
-    "",
+    "dekooderi",
     "",// TODO
     "Decodificador",
     "",// TODO
@@ -163,12 +163,12 @@ const tI18nPhrase Phrases[] = {
   { "primary device",
     "Primärgerät",
     "",// TODO
-    "",// TODO
+    "scheda primaria",
     "",// TODO
     "",// TODO
     "Carte primaire",
     "",// TODO
-    "",
+    "ensisijainen",
     "",// TODO
     "Dispositivo principal",
     "",// TODO

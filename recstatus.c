@@ -10,7 +10,7 @@
 #include <vdr/menu.h>
 #include "i18n.h"
 
-static const char *VERSION        = "0.0.5";
+static const char *VERSION        = "0.0.7";
 static const char *DESCRIPTION    = trNOOP("recording status monitor");
 static const char *MAINMENUENTRY  = trNOOP("Recording status");
 

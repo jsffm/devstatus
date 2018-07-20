@@ -1,6 +1,14 @@
 VDR Plugin 'recstatus' Revision History
 ---------------------------------------
 
+2007-12-31: Version 0.0.7
+
+- added Italian translation, thanks to Diego from vdr-italia.phpbb24.com
+
+2007-12-30: Version 0.0.6
+
+- added finnish translation, thanks to Ville Skyttä
+
 2007-09-03: Version 0.0.5
 
 - full support for new i18n system in vdr>=1.5.7, but also fully backwards

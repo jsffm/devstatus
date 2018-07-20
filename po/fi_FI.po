@@ -20,24 +20,24 @@ msgstr ""
 
 #: recstatus.c:14
 msgid "recording status monitor"
-msgstr ""
+msgstr "tallennusten tilan seuranta"
 
 #: recstatus.c:15 recstatus.c:83
 msgid "Recording status"
-msgstr ""
+msgstr "Tallennusten tila"
 
 #: recstatus.c:91
 msgid "device with decoder"
-msgstr ""
+msgstr "dekooderi"
 
 #: recstatus.c:91
 msgid "primary device"
-msgstr ""
+msgstr "ensisijainen"
 
 #: recstatus.c:93
 msgid "Device"
-msgstr ""
+msgstr "Kortti"
 
 #: recstatus.c:111
 msgid "no current recordings"
-msgstr ""
+msgstr "ei meneill‰‰n olevia tallennuksia"

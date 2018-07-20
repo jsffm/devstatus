@@ -9,6 +9,7 @@
 #define _I18N__H
 
 #include <vdr/i18n.h>
+#include <vdr/plugin.h>
 
 #if APIVERSNUM < 10507
 extern const tI18nPhrase Phrases[];
