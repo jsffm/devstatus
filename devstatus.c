@@ -351,7 +351,7 @@ public:
                     recordingFound = recording;
             if (!recordingFound)
                 return osContinue;
-            cReplayControl::SetRecording(recordingFound->FileName(), recordingFound->Title());
+            cReplayControl::SetRecording(recordingFound->FileName());
             return osReplay;
     }
 
