@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: VDR 1.5.7\n"
 "Report-Msgid-Bugs-To: <vdr@constabel.net>\n"
-"POT-Creation-Date: 2008-01-02 10:55+0100\n"
+"POT-Creation-Date: 2008-02-03 13:19+0100\n"
 "PO-Revision-Date: 2007-08-18 21:11+0200\n"
 "Last-Translator: Ruben Nunez Francisco <ruben.nunez@tang-it.com>\n"
 "Language-Team: <vdr@linuxtv.org>\n"
@@ -49,7 +49,3 @@ msgstr ""
 #, fuzzy
 msgid "Number of concurrent recordings"
 msgstr "actualmente no hay grabaciones"
-
-#, fuzzy
-#~ msgid "recording status monitor"
-#~ msgstr "Estado de la grabación"

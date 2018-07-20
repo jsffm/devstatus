@@ -93,6 +93,9 @@ i18n: $(I18Nmo)
 	    cp $(PODIR)/$$i.mo $(LOCALEDIR)/$$i/LC_MESSAGES/$(I18Nvdrmo);\
 	    done
 
+generate-i18n: i18n-template.h $(I18Npot) $(I18Npo) buildutil/pot2i18n.pl
+	buildutil/pot2i18n.pl $(I18Npot) i18n-template.h > i18n-generated.h
+
 ### Targets:
 
 all: libvdr-$(PLUGIN).so i18n

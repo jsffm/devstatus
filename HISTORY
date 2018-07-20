@@ -1,6 +1,12 @@
 VDR Plugin 'recstatus' Revision History
 ---------------------------------------
 
+2008-02-15: Version 0.0.8
+
+- Now the i18n system should be really 1.4.x compatible.
+
+- Updated languages italien, finnish, french
+
 2008-01-01: Version 0.0.8-beta1
 
 - added SVDRP interface with the following command:

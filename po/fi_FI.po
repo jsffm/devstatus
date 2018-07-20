@@ -10,16 +10,15 @@ msgid ""
 msgstr ""
 "Project-Id-Version: VDR 1.5.7\n"
 "Report-Msgid-Bugs-To: <vdr@constabel.net>\n"
-"POT-Creation-Date: 2008-01-02 10:55+0100\n"
-"PO-Revision-Date: 2007-08-18 21:11+0200\n"
-"Last-Translator: Rolf Ahrenberg <rahrenbe@cc.hut.fi>\n"
+"POT-Creation-Date: 2008-02-03 13:19+0100\n"
+"PO-Revision-Date: 2008-01-02 21:34+0200\n"
+"Last-Translator: Ville Skytt‰ <ville.skytta@iki.fi>\n"
 "Language-Team: <vdr@linuxtv.org>\n"
 "MIME-Version: 1.0\n"
-"Content-Type: text/plain; charset=ISO-8859-15\n"
+"Content-Type: text/plain; charset=iso-8859-15\n"
 "Content-Transfer-Encoding: 8bit\n"
 
 #: recstatus.c:14
-#, fuzzy
 msgid "Recording status of dvb devices"
 msgstr "Tallennusten tila"
 
@@ -40,18 +39,13 @@ msgid "Device"
 msgstr "Kortti"
 
 #: recstatus.c:111 recstatus.c:293
-#, fuzzy
 msgid "currently no recordings"
 msgstr "ei meneill‰‰n olevia tallennuksia"
 
 #: recstatus.c:265
 msgid "List of DVB devices"
-msgstr ""
+msgstr "DVB-kortit"
 
 #: recstatus.c:303
-#, fuzzy
 msgid "Number of concurrent recordings"
-msgstr "ei meneill‰‰n olevia tallennuksia"
-
-#~ msgid "recording status monitor"
-#~ msgstr "tallennusten tilan seuranta"
+msgstr "Yht‰aikaisia tallennuksia"

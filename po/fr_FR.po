@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: VDR 1.5.7\n"
 "Report-Msgid-Bugs-To: <vdr@constabel.net>\n"
-"POT-Creation-Date: 2008-01-02 10:55+0100\n"
+"POT-Creation-Date: 2008-02-03 13:19+0100\n"
 "PO-Revision-Date: 2007-08-18 21:11+0200\n"
 "Last-Translator: Nicolas Huillard <nhuillard@e-dition.fr>\n"
 "Language-Team: <vdr@linuxtv.org>\n"
@@ -19,7 +19,6 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 
 #: recstatus.c:14
-#, fuzzy
 msgid "Recording status of dvb devices"
 msgstr "Status d'enregistrement"
 
@@ -40,7 +39,6 @@ msgid "Device"
 msgstr "Carte"
 
 #: recstatus.c:111 recstatus.c:293
-#, fuzzy
 msgid "currently no recordings"
 msgstr "pas d'enregistrement actuellement"
 
@@ -49,10 +47,5 @@ msgid "List of DVB devices"
 msgstr ""
 
 #: recstatus.c:303
-#, fuzzy
 msgid "Number of concurrent recordings"
 msgstr "pas d'enregistrement actuellement"
-
-#, fuzzy
-#~ msgid "recording status monitor"
-#~ msgstr "Status d'enregistrement"
