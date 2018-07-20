@@ -208,13 +208,14 @@ public:
         char* output = NULL;
 
         #define FRONTEND_DEVICE "/dev/dvb/adapter%d/frontend%d"
+//        cString dev = cString::sprintf(FRONTEND_DEVICE, d->CardIndex() + 1, 0);
         cString dev = cString::sprintf(FRONTEND_DEVICE, d->CardIndex(), 0);
         m_Frontend = open(dev, O_RDONLY | O_NONBLOCK);
         if (m_Frontend < 0) {
            return;
         }
         int rcfe  = ioctl(m_Frontend, FE_GET_INFO, &m_FrontendInfo);
-        // CHECK(ioctl(m_Frontend, FE_READ_STATUS, &status));
+	// CHECK(ioctl(m_Frontend, FE_READ_STATUS, &status));
         // CHECK(ioctl(m_Frontend, FE_READ_BER, &ber));
         close(m_Frontend);
 
@@ -258,10 +259,10 @@ public:
     }
 
     void Write (void) { //Repaint screen
-          int last = Current();
-          Clear(); // clear OSD
-          for (int i = 0; i < cDevice::NumDevices(); i++) {
-              cDevice *d = cDevice::GetDevice(i);
+       int last = Current();
+       Clear(); // clear OSD
+       for (int i = 0; i < cDevice::NumDevices(); i++) {
+           if (cDevice *d = cDevice::GetDevice(i)) {
               char* devName = NULL;
               char* devInfo = NULL;
 
@@ -371,23 +372,24 @@ public:
                   DeviceHeader->SetSelectable(false);
                   Add(DeviceHeader);
               }
-          }      
+          }
+       }      
 
-          cMenuRecItem* norec = NULL;
+       cMenuRecItem* norec = NULL;
 
-          norec = new cMenuRecItem("");
-          norec->SetSelectable(true); // so we can scroll to the end of the list
-          Add(norec);
+       norec = new cMenuRecItem("");
+       norec->SetSelectable(true); // so we can scroll to the end of the list
+       Add(norec);
 
-          SetHelp( showRecordings ? tr("no recordings"):tr("recordings"), 
-                   showStrength   ? tr("no strength")  :tr("strength"),
-                   showChannels   ? tr("no channels")  :tr("channels"), 
-                   tr("Refresh display")
-                 );
+       SetHelp( showRecordings ? tr("no recordings"):tr("recordings"), 
+                showStrength   ? tr("no strength")  :tr("strength"),
+                showChannels   ? tr("no channels")  :tr("channels"), 
+                tr("Refresh display")
+              );
 
-          SetCurrent(Get(last));
+       SetCurrent(Get(last));
 
-          Display();       
+       Display();       
     } //Write()
 
     eOSState Play(char* file) {
