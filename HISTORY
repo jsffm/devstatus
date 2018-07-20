@@ -1,7 +1,25 @@
 VDR Plugin 'devstatus' Revision History
 ---------------------------------------
 
-2008-11-15: Version 0.2.0
+2008-12-02: Version 0.3.0  ("Chicolini")
+
+- The screen ist automagically rewritten as soon as a channel is
+  switched or a recording starts or stops (written by Joe_D at vdr-portal.de 
+  <http://www.vdr-portal.de/board/thread.php?postid=770736>)
+- The selected line is retained after a screen refresh 
+- the tuned frequency is now displayed 
+- channel switching substituted by real transponder switching:
+  pressing channel down/up or 7/9 will tune the selected device
+  to the closest transponder frequency; the live view is 
+  _not_ switched, so you can tune even to crypted channel
+- strange signal values will ... should be suppressed
+- setup page added (suggested by vejoun at vdr-portal.de)
+- fixed SVDRP crash, needs still some work (fixed by Joe_D at vdr-portal.de)
+- minor optical issues
+- renamed some identifiers (written by Joe_D at vdr-portal.de)
+
+
+2008-11-17: Version 0.2.0 ("Teasdale")
 
 - The tuned channel are selectable; pressing ok will switch the channel; 
   pressing 7 or the channel down key will tune one channel down, 
@@ -11,7 +29,7 @@ VDR Plugin 'devstatus' Revision History
 - the blue key will refresh the display (for new signal values)
 
 
-2008-11-15: Version 0.1.0
+2008-11-15: Version 0.1.0 ("Trentino")
 
 - Initial revision.
 

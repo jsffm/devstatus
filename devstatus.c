@@ -13,9 +13,11 @@
 #include <vdr/menu.h>
 #include "i18n.h"
 
-static const char *VERSION        = "0.2.0";
+
+static const char *VERSION        = "0.3.0";
 static const char *DESCRIPTION    = trNOOP("Status of dvb devices");
 static const char *MAINMENUENTRY  = trNOOP("Device status");
+
 
 #undef DAYDATETIMESTRING
 #if VDRVERSNUM >= 10318
@@ -28,7 +30,9 @@ static const char *MAINMENUENTRY  = trNOOP("Device status");
 static int showRecordings = 1;
 static int showStrength  = 1;
 static int showChannels  = 1;
+static int update = 0;
 
+//----------------Tools
 
 const char* cardtypeAsString(int typ) {
    switch (typ) {
@@ -40,6 +44,58 @@ const char* cardtypeAsString(int typ) {
 }
 
 
+int getFrequencyMHz(int value) {
+   int ret = value;
+   while (ret > 20000) ret /= 1000;
+   return ret;
+}
+
+cChannel* getTunedChannel(cDevice *d)  {
+   int channelNo;
+   cChannel *channel = NULL;
+
+   for (channelNo = 1; channelNo <= Channels.MaxNumber(); channelNo++) {
+      if( (channel = Channels.GetByNumber(channelNo)) ) {
+         if (d->IsTunedToTransponder(channel)) {
+           return channel;
+         }
+      }
+   }
+   return NULL;
+}
+
+int getTunedFrequency (cDevice *device) {
+    cChannel *tunedChannel = getTunedChannel(device);
+    return tunedChannel ? tunedChannel->Frequency() : 0;
+}
+
+
+cChannel* nextTransponderChannel( cDevice *device, int direction) {
+// search for the next transponder (direction=1) or the previous one (-1) 
+   int channelNo;
+   cChannel *channel = NULL;
+   cChannel *resChannel = NULL;
+   int oldQRG = getTunedFrequency(device);
+            
+   for (channelNo = 1; channelNo <= Channels.MaxNumber(); channelNo++) {
+      if( (channel = Channels.GetByNumber(channelNo)) ) {
+          if( device->ProvidesSource( channel->Source() ) ) { // same Source (DVB-T, -S, ...)
+             if( !ISTRANSPONDER(channel->Frequency(),oldQRG) ) {  //not the same transponder
+               if( channel->Frequency()*direction > oldQRG*direction ) {  
+                 if(  resChannel == NULL 
+                   || (abs(channel->Frequency() - oldQRG) < abs(resChannel->Frequency() - oldQRG))
+                 ) {  
+                    resChannel = channel;
+                 }                  
+               }                  
+             }
+          }
+      }
+   }
+   return resChannel;
+}           
+
+
 // --- cRecObj --------------------------------------------------------
 class cRecObj : public cListObject {
 public:
@@ -47,28 +103,25 @@ public:
     const cDevice* device;
     cTimer* timer;
 public:
-    cRecObj(const char* Name, const cDevice* Device, cTimer* Timer)
-        {
+    cRecObj(const char* Name, const cDevice* Device, cTimer* Timer) {
             name = strdup(Name);
             device = Device;
             timer = Timer;
-        }
-    ~cRecObj()
-        {
+    }
+    ~cRecObj() {
             if (name) free(name);
-        }
+    }
  };
 
-class cRecStatusMonitor : public cStatus 
-{
+// --- cDevStatusMonitor ---------------------------------------------------
+class cDevStatusMonitor : public cStatus {
 protected:
 #if VDRVERSNUM >= 10338
     virtual void Recording(const cDevice *Device, const char *Name, const char *FileName, bool On);
 #else
     virtual void Recording(const cDevice *Device, const char *Name);
 #endif
- public:
-    cRecStatusMonitor();
+    virtual void ChannelSwitch(const cDevice *Device, int ChannelNumber);
 };
 
 cList<cRecObj> CurrentRecordings;
@@ -77,65 +130,82 @@ cList<cRecObj> CurrentRecordings;
 class cMenuRecItem : public cOsdItem {
   char *Name;
 public: 
-  int ChannelNr; 
+  int ChannelNr;
+  int DeviceNr;
   cMenuRecItem(const char* name) { 
-          Name = NULL;
-          ChannelNr = 0;
-          if (name) {  Name = strdup(name); SetText(Name, false); }
+      Name = NULL;
+      ChannelNr = 0;
+      DeviceNr = -1;
+      if (name) {  Name = strdup(name); SetText(Name, false); }
   }
   cMenuRecItem(const cRecObj* r) { 
-          Name = NULL;
-          if (r->name) {  
-              Name = strdup(r->name); 
-              char* itemText = NULL;
-              asprintf(&itemText, "%s\t%s", DAYDATETIME(r->timer->StartTime()), Name);
-              SetText(itemText, false); 
-          }
+      Name = NULL;
+      if (r->name) {  
+          Name = strdup(r->name); 
+          char* itemText = NULL;
+          asprintf(&itemText, "%s\t%s", DAYDATETIME(r->timer->StartTime()), Name);
+          SetText(itemText, false); 
+      }
   }
   char* RecName()  { return Name; }
   int GetChannelNr()  { return ChannelNr; }
   bool IsChannel() { return ChannelNr != 0; }
+  bool HasDevice() { return DeviceNr >= 0; }
+  cChannel* GetChannel()  { return Channels.GetByNumber(ChannelNr); }
+  cDevice* GetDevice() { return cDevice::GetDevice(DeviceNr); };
 };
 
 
-class cMenuRecStatus : public cOsdMenu {
+class cMenuDevStatus : public cOsdMenu {
 private:
 public:
-     void deviceinfoAsString(cDevice *d)
-     {
+     void deviceinfoAsString(cDevice *d) {
         struct dvb_frontend_info m_FrontendInfo;
         int m_Frontend;
-        fe_status_t status;
+        // fe_status_t status;
         uint16_t signal = 0;
         uint16_t snr = 0;
-        uint32_t ber = 0;
+        // uint32_t ber = 0;
         char* output = NULL;
-        #define FRONTEND_DEVICE "/dev/dvb/adapter%d/frontend%d"
 
+        #define FRONTEND_DEVICE "/dev/dvb/adapter%d/frontend%d"
         cString dev = cString::sprintf(FRONTEND_DEVICE, d->CardIndex(), 0);
         m_Frontend = open(dev, O_RDONLY | O_NONBLOCK);
         if (m_Frontend < 0) {
            return;
         }
-        CHECK(ioctl(m_Frontend, FE_GET_INFO, &m_FrontendInfo));
-        CHECK(ioctl(m_Frontend, FE_READ_STATUS, &status));
-        CHECK(ioctl(m_Frontend, FE_READ_SIGNAL_STRENGTH, &signal));
-        CHECK(ioctl(m_Frontend, FE_READ_SNR, &snr));
-        CHECK(ioctl(m_Frontend, FE_READ_BER, &ber));
+        int rcfe  = ioctl(m_Frontend, FE_GET_INFO, &m_FrontendInfo);
+        // CHECK(ioctl(m_Frontend, FE_READ_STATUS, &status));
+        int rcsig = ioctl(m_Frontend, FE_READ_SIGNAL_STRENGTH, &signal);
+        int rcsnr = ioctl(m_Frontend, FE_READ_SNR, &snr);
+        // CHECK(ioctl(m_Frontend, FE_READ_BER, &ber));
         close(m_Frontend);
 
-        asprintf(&output, "%s (%s) - /dev/dvb/adapter%d", 
-                          cardtypeAsString(m_FrontendInfo.type), 
-                          m_FrontendInfo.name,
-                          d->CardIndex()
-        );
+        // 2. line type (name) - devpath
+        if( rcfe == 0 ) {
+           asprintf(&output, "%s (%s) - %s", 
+                    cardtypeAsString(m_FrontendInfo.type), 
+                    m_FrontendInfo.name,
+                    *dev
+           );
+        } else {
+           asprintf(&output, "no information available (rc=%d) - %s", rcfe, *dev);
+        }
         cMenuRecItem* norec =  new cMenuRecItem(output);
         norec->SetSelectable(false);
         Add(norec);
         free(output);
 
+        // 3. line strength
         if( showStrength ) {
-            asprintf(&output, tr("signal: %d %%, s/n: %d %%"), signal / 655, snr / 655 );
+            if( (rcsig == 0) && (rcsnr == 0) && ((signal > 0) || (snr>0)) ) {
+                asprintf(&output, tr("frequency: %d MHz, signal: %d%%, s/n: %d%%"), 
+                                     getFrequencyMHz (getTunedFrequency(d)) ,
+                                     signal / 655, snr / 655);
+            } else {
+                asprintf(&output, tr("no signal information available (rc=%d)"), rcsig );
+            }
+                          
             norec =  new cMenuRecItem(output);
             norec->SetSelectable(false);
             Add(norec);
@@ -143,20 +213,19 @@ public:
         }
      }
 
-
-    cMenuRecStatus():cOsdMenu(tr("Device status"), 15)
-      {
+    cMenuDevStatus():cOsdMenu(tr("Device status"), 15) {
           Write();
-      }
+    }
 
-    void Write (void)
-      {
+    void Write (void) { //Repaint screen
+          int last = Current();
           Clear(); // clear OSD
-          for (int i = 0; i < cDevice::NumDevices(); i++) 
-          {
+          for (int i = 0; i < cDevice::NumDevices(); i++) {
               cDevice *d = cDevice::GetDevice(i);
               char* devName = NULL;
               char* devInfo = NULL;
+
+              //  line  --- device <n> ....
               if (d->HasDecoder() || d->IsPrimaryDevice())
                   asprintf(&devInfo, " (%s%s%s)", 
                     d->HasDecoder() ? tr("device with decoder") : "", 
@@ -171,14 +240,18 @@ public:
                         devInfo ? devInfo : ""
               ) ;
               cMenuRecItem* DeviceHeader =  new cMenuRecItem(devName);
+              DeviceHeader->DeviceNr = i;
               DeviceHeader->SetSelectable(true);
               Add(DeviceHeader);
               free(devName);
               if (devInfo)
                   free(devInfo);
 
+              // name, type 
+              // signal
               deviceinfoAsString(d);
-
+                                                                        
+              // recordings
               if( showRecordings ) {
                   int Count = 0;
                   for (cRecObj *r = CurrentRecordings.First(); r; r = CurrentRecordings.Next(r)) {
@@ -194,7 +267,7 @@ public:
                   }
               }
 
-                     
+              // channels        
               if (showChannels) {
                  cMenuRecItem* norec = NULL;
                  char* output = NULL;
@@ -204,15 +277,20 @@ public:
                  for (channelNo = 1; channelNo <= Channels.MaxNumber(); channelNo++) {
                     if( (channel = Channels.GetByNumber(channelNo)) ) {
                        if (d->IsTunedToTransponder(channel)) {
-                           if( channelNo == d->CurrentChannel()) 
-                              asprintf(&output, tr("  tuned to %4d + %s"), channelNo, channel->Name() );
-                           else 
-                              asprintf(&output, tr("  tuned to %4d - %s"), channelNo, channel->Name() );
-                           norec = new cMenuRecItem(output);
-                           norec->ChannelNr = channelNo;
-                           norec->SetSelectable(true);
-                           Add(norec);
-                           free(output);
+                            bool currentLive = channelNo == d->CurrentChannel() 
+                                               && (i == cDevice::ActualDevice()->CardIndex());
+                            asprintf(&output, tr("  %4d %s %s"), 
+                                        channelNo, 
+                                        currentLive ? "+":"-",
+                                        channel->Name()
+                            );
+                            
+                            norec = new cMenuRecItem(output);
+                            norec->ChannelNr = channelNo;
+                            norec->DeviceNr = i;
+                            norec->SetSelectable(true);
+                            Add(norec);
+                            free(output);
                        }
                     }
                  }
@@ -237,12 +315,14 @@ public:
                    showChannels   ? tr("no channels")  :tr("channels"), 
                    tr("Refresh display")
                  );
-          Display();       
-          
-      }
 
-    eOSState Play(char* file)
-        {
+          SetCurrent(Get(last));
+
+          Display();       
+    } //Write()
+
+    eOSState Play(char* file) {
+            // Play the selected recording 
             cRecording* recordingFound = NULL;
             for(cRecording* recording = Recordings.First(); recording; recording = Recordings.Next(recording))
                 if (strstr(recording->Title(), file))
@@ -251,73 +331,82 @@ public:
                 return osContinue;
             cReplayControl::SetRecording(recordingFound->FileName(), recordingFound->Title());
             return osReplay;
-        }
+    }
 
-    eOSState ProcessKey(eKeys Key)
-        {
+    eOSState ProcessKey(eKeys Key) {
             cMenuRecItem *ri;
-            eOSState state = cOsdMenu::ProcessKey(Key);     
-            if (state == osUnknown) 
-            {
-                switch(Key)
-                {
-                  case kRed:
-                        showRecordings = !showRecordings;
-                        Write();
-                        break;
-                  case kGreen:
-                        showStrength = !showStrength;
-                        Write();
-                        break;
-                  case kYellow:
-                        showChannels = !showChannels;
-                        Write();
-                        break;
-                  case kBlue:
-                        Write();
-                        break;
-                  case kChanUp:
-                  case kChanDn: 
-                  case k7: 
-                  case k9:
-                        ri = (cMenuRecItem*)Get(Current());
-                        if (ri->Selectable())
-                            if (ri->IsChannel()) {
-                                Channels.SwitchTo(ri->GetChannelNr() + ((Key==k9)||(Key==kChanUp)? 1:-1) );
-                                Write(); //repaint; maybe 'Live' has changed
-                                return osContinue;
-                            }
-                        break;
-                       
-                  case kOk: { 
-                        ri = (cMenuRecItem*)Get(Current());
-                        if (ri->Selectable())
-                            if (ri->IsChannel()) {
-                                Channels.SwitchTo(ri->GetChannelNr());
-                                Write(); //repaint; maybe 'Live' has changed
-                                return osContinue;
-                            } else 
-                                return Play(ri->RecName());
-                        break;
-                        }
-                  default:
-                    state = osContinue;
+            eOSState state = osUnknown;
+            switch(Key) {
+              case kRed:
+                    showRecordings = !showRecordings;
+                    Write();
                     break;
-                }
+              case kGreen:
+                    showStrength = !showStrength;
+                    Write();
+                    break;
+              case kYellow:
+                    showChannels = !showChannels;
+                    Write();
+                    break;
+              case kBlue:
+                    Write();
+                    break;
+              case kChanUp:  case k7: 
+              case kChanDn:  case k9:
+                    // switch Transponder
+                    ri = (cMenuRecItem*)Get(Current());
+                    if( ri->Selectable() & ri->HasDevice() ) {
+
+                        cChannel *newChannel = nextTransponderChannel(
+                            ri->GetDevice(), ((Key==k9)||(Key==kChanUp)? 1:-1)
+                        );
+                        if( newChannel != NULL ) 
+                           // Switch; no live view, so crypted
+                           // transponder will be tuneable
+                           ri->GetDevice()->SwitchChannel( newChannel, false );
+
+                        Write(); //repaint; maybe 'Live' has changed
+                        return osContinue;
+                    }
+                    break;
+
+              case kOk:
+                    ri = (cMenuRecItem*)Get(Current());
+                    if (ri->Selectable()) {
+                        if (ri->IsChannel()) {
+                            Channels.SwitchTo(ri->GetChannelNr());
+                            Write(); //repaint; maybe 'Live' has changed
+                            return osContinue;
+                        } else
+                            return Play(ri->RecName());
+                    }
+                    break;
+
+              case kNone:
+                    if( update ) {
+                       update=0;
+                       Write();
+                       break;
+                    }
+                    break;
+
+              default:
+                    state = cOsdMenu::ProcessKey(Key);
+                    break;
             }
             return state;
         }
-  };
+}; //cMenuDevStatus 
 
 
 
-class cPluginRecstatus : public cPlugin {
+class cPluginDevstatus : public cPlugin {
 private:
-    cRecStatusMonitor* recStatusMonitor;
-  // Add any member variables or functions you may need here.
+    cDevStatusMonitor* devStatusMonitor;
 public:
-  cPluginRecstatus(void);
-  virtual ~cPluginRecstatus();
+  cPluginDevstatus(void);
+  virtual ~cPluginDevstatus();
   virtual const char *Version(void) { return VERSION; }
   virtual const char *Description(void) { return tr(DESCRIPTION); }
   virtual bool ProcessArgs(int argc, char *argv[]);
@@ -332,77 +421,101 @@ public:
   virtual bool Service(const char *Id, void *Data = NULL);
   virtual const char **SVDRPHelpPages(void);
   virtual cString SVDRPCommand(const char *Command, const char *Option, int &ReplyCode);
-  };
+};
 
-cPluginRecstatus::cPluginRecstatus(void)
-{
-    recStatusMonitor = NULL;
+// --- cMenuSetupDevstatus -------------------------------------------------------
+
+class cMenuSetupDevstatus : public cMenuSetupPage {
+private:
+  int newShowRecordings;
+  int newShowStrength;
+  int newShowChannels;
+protected:
+  virtual void Store(void);
+public:
+  cMenuSetupDevstatus(void);
+};
+
+cMenuSetupDevstatus::cMenuSetupDevstatus(void) {
+  newShowRecordings = showRecordings;
+  newShowStrength   = showStrength;
+  newShowChannels   = showChannels;
+  Add(new cMenuEditBoolItem(tr("Show recordings"), &newShowRecordings));
+  Add(new cMenuEditBoolItem(tr("Show signals"   ), &newShowStrength));
+  Add(new cMenuEditBoolItem(tr("Show channels"  ), &newShowChannels));
 }
 
-cPluginRecstatus::~cPluginRecstatus()
-{
-    delete recStatusMonitor;
+void cMenuSetupDevstatus::Store(void) {
+  SetupStore("ShowRecordings", showRecordings = newShowRecordings);
+  SetupStore("ShowStrength", showStrength = newShowStrength);
+  SetupStore("ShowChannels", showChannels = newShowChannels);
 }
 
-bool cPluginRecstatus::ProcessArgs(int argc, char *argv[])
-{
+bool cPluginDevstatus::SetupParse(const char *Name, const char *Value) {
+  // Parse your own setup parameters and store their values
+  if      (!strcasecmp(Name, "ShowRecordings"))  showRecordings = atoi(Value) % 2;
+  else if (!strcasecmp(Name, "ShowStrength"  ))  showStrength = atoi(Value) % 2;
+  else if (!strcasecmp(Name, "ShowChannels"  ))  showChannels = atoi(Value) % 2;
+  else return false;
+  return true;
+}
+
+cMenuSetupPage *cPluginDevstatus::SetupMenu(void) {
+  // Return a setup menu in case the plugin supports one.
+  return new cMenuSetupDevstatus;
+}
+
+//---
+
+cPluginDevstatus::cPluginDevstatus(void) {
+    devStatusMonitor = NULL;
+}
+
+cPluginDevstatus::~cPluginDevstatus() {
+    delete devStatusMonitor;
+}
+
+bool cPluginDevstatus::ProcessArgs(int argc, char *argv[]) {
   // Implement command line argument processing here if applicable.
   return true;
 }
 
-bool cPluginRecstatus::Initialize(void)
-{
+bool cPluginDevstatus::Initialize(void) {
 #if APIVERSNUM < 10507
    RegisterI18n(Phrases);
 #endif
   return true;
 }
 
-bool cPluginRecstatus::Start(void)
-{
-    recStatusMonitor = new cRecStatusMonitor;
+bool cPluginDevstatus::Start(void) {
+    devStatusMonitor = new cDevStatusMonitor;
     return true;
 }
 
-void cPluginRecstatus::Stop(void)
-{
+void cPluginDevstatus::Stop(void) {
   // Stop any background activities the plugin shall perform.
 }
 
-void cPluginRecstatus::Housekeeping(void)
-{
+void cPluginDevstatus::Housekeeping(void) {
   // Perform any cleanup or other regular tasks.
 }
 
-cOsdObject *cPluginRecstatus::MainMenuAction(void)
-{
-    return new cMenuRecStatus();
+cOsdObject *cPluginDevstatus::MainMenuAction(void) {
+    return new cMenuDevStatus();
 }
 
-cMenuSetupPage *cPluginRecstatus::SetupMenu(void)
-{
-  // Return a setup menu in case the plugin supports one.
-  return NULL;
-}
 
-bool cPluginRecstatus::SetupParse(const char *Name, const char *Value)
-{
-  // Parse your own setup parameters and store their values.
-  return false;
-}
 
-bool cPluginRecstatus::Service(const char *Id, void *Data)
-{
+bool cPluginDevstatus::Service(const char *Id, void *Data) {
   // Handle custom service requests from other plugins
   return false;
 }
 
-const char **cPluginRecstatus::SVDRPHelpPages(void)
-{
+const char **cPluginDevstatus::SVDRPHelpPages(void) {
   // Return help text for SVDRP commands this plugin implements
   static const char *HelpPages[] = {
     "DEVSTAT\n"
-    "    Print all devices with their Recordingstats.",
+    "    Print all devices",
     "RECNUMBER\n"
     "    Print number of concurrent recordings for all devices.",
     NULL
@@ -410,14 +523,12 @@ const char **cPluginRecstatus::SVDRPHelpPages(void)
   return HelpPages;
 }
 
-cString cPluginRecstatus::SVDRPCommand(const char *Command, const char *Option, int &ReplyCode)
-{
+cString cPluginDevstatus::SVDRPCommand(const char *Command, const char *Option, int &ReplyCode) {
   // Process SVDRP commands this plugin implements
-  if(strcasecmp(Command, "RECSTAT") == 0) {
+  if(strcasecmp(Command, "DEVSTAT") == 0) {
     char* output = NULL;
     asprintf(&output, "%s:\n", tr("List of DVB devices"));
-    for (int i = 0; i < cDevice::NumDevices(); i++)
-    {
+    for (int i = 0; i < cDevice::NumDevices(); i++) {
       cDevice *d = cDevice::GetDevice(i);
       char* devName = NULL;
       char* devInfo = NULL;
@@ -448,14 +559,14 @@ cString cPluginRecstatus::SVDRPCommand(const char *Command, const char *Option, 
       asprintf(&output, "%s\n", output);
     }
     // we use the default reply code here
-    return cString::sprintf("%s", output);
+    // return cString::sprintf("%s", output);
+    return output;
   }
 
   if(strcasecmp(Command, "RECNUMBER") == 0) {
     char* output = NULL;
     asprintf(&output, "%s:\n", tr("Number of concurrent recordings"));
-    for (int i = 0; i < cDevice::NumDevices(); i++)
-    {
+    for (int i = 0; i < cDevice::NumDevices(); i++) {
       cDevice *d = cDevice::GetDevice(i);
       char* devName = NULL;
       asprintf(&devName, "%s %d", tr("Device"), i+1);
@@ -463,7 +574,7 @@ cString cPluginRecstatus::SVDRPCommand(const char *Command, const char *Option, 
       free(devName);
     int Count = 0;
     for (cRecObj *r = CurrentRecordings.First(); r; r = CurrentRecordings.Next(r)){ // add recordings to the output
-      if (r && r->device == d){
+      if (r && r->device == d) {
         Count++;
       }
     }
@@ -472,7 +583,8 @@ cString cPluginRecstatus::SVDRPCommand(const char *Command, const char *Option, 
       asprintf(&output, "%s\n", output);
     }
     // we use the default reply code here
-    return cString::sprintf("%s", output);
+    // return cString::sprintf("%s", output);
+    return output;
   }
 
   return NULL;
@@ -481,51 +593,46 @@ cString cPluginRecstatus::SVDRPCommand(const char *Command, const char *Option, 
 
 /*--------*/
 
-cRecStatusMonitor::cRecStatusMonitor()
-{
-}
 
 
 #if VDRVERSNUM >= 10338 
-void cRecStatusMonitor::Recording(const cDevice *Device, const char *Name, const char *FileName, bool On)
+void cDevStatusMonitor::Recording(const cDevice *Device, const char *Name, const char *FileName, bool On) {
 #else
-void cRecStatusMonitor::Recording(const cDevice *Device, const char *Name)
+void cDevStatusMonitor::Recording(const cDevice *Device, const char *Name) {
 #endif
-{
-    // insert new timers currently recording in TimersRecording
-    if (Name)
-    {
-        for (cTimer *ti = Timers.First(); ti; ti = Timers.Next(ti)) 
-            if (ti->Recording())
-            {
+    if (Name) {
+        // insert new timers currently recording in TimersRecording
+        for (cTimer *ti = Timers.First(); ti; ti = Timers.Next(ti))
+            if (ti->Recording()) {
                 // check if this is a new entry
                 bool bFound = false;
-                for (cRecObj *r = CurrentRecordings.First(); r; r = CurrentRecordings.Next(r)) 
+                for (cRecObj *r = CurrentRecordings.First(); r; r = CurrentRecordings.Next(r))
                     if (r->timer == ti)
                         bFound = true;
 
                 if (bFound) continue; // already handled
                 CurrentRecordings.Add(new cRecObj(Name, Device, ti));
+                update=1;
                 return;
             }
     }
-    
-    if (!Name)
-    {
+
+    if (!Name) {
         // remove timers that finished recording from TimersRecording
-        for (cRecObj *r = CurrentRecordings.First(); r; r = CurrentRecordings.Next(r)) 
-        {
-            if (!r->timer->Recording())
-            {
+        for (cRecObj *r = CurrentRecordings.First(); r; r = CurrentRecordings.Next(r)) {
+            if (!r->timer->Recording()) {
                 CurrentRecordings.Del(r);
+                update = 1;
                 break;
             }
         }
     }
 }
 
+void cDevStatusMonitor::ChannelSwitch(const cDevice *Device, int ChannelNumber) {
+      if (!ChannelNumber) return;
+      update=1;
+}
 
 
-             
-
-VDRPLUGINCREATOR(cPluginRecstatus); // Don't touch this!
+VDRPLUGINCREATOR(cPluginDevstatus); // Don't touch this!

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: VDR 1.5.7\n"
 "Report-Msgid-Bugs-To: <koch@u32.de>\n"
-"POT-Creation-Date: 2008-11-17 22:50+0100\n"
+"POT-Creation-Date: 2008-12-02 21:46+0100\n"
 "PO-Revision-Date: 2007-08-18 21:11+0200\n"
 "Last-Translator: Istvan Koenigsberger <istvnko@hotmail.com>, Guido Josten <guido.josten@t-online.de>\n"
 "Language-Team: <vdr@linuxtv.org>\n"
@@ -16,97 +16,109 @@ msgstr ""
 "Content-Type: text/plain; charset=ISO-8859-2\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: devstatus.c:17
+#: devstatus.c:18
 msgid "Status of dvb devices"
 msgstr ""
 
-#: devstatus.c:18 devstatus.c:147
+#: devstatus.c:19 devstatus.c:216
 msgid "Device status"
 msgstr ""
 
-#: devstatus.c:35
+#: devstatus.c:39
 msgid "satellite card"
 msgstr ""
 
-#: devstatus.c:36
+#: devstatus.c:40
 msgid "cable card"
 msgstr ""
 
-#: devstatus.c:37
+#: devstatus.c:41
 msgid "terrestrial card"
 msgstr ""
 
-#: devstatus.c:38
+#: devstatus.c:42
 msgid "unknown cardtype"
 msgstr ""
 
-#: devstatus.c:138
+#: devstatus.c:202
 #, c-format
-msgid "signal: %d %%, s/n: %d %%"
+msgid "frequency: %d MHz, signal: %d%%, s/n: %d%%"
 msgstr ""
 
-#: devstatus.c:162 devstatus.c:425
+#: devstatus.c:206
+#, c-format
+msgid "no signal information available (rc=%d)"
+msgstr ""
+
+#: devstatus.c:231 devstatus.c:536
 msgid "device with decoder"
 msgstr ""
 
-#: devstatus.c:164 devstatus.c:425
+#: devstatus.c:233 devstatus.c:536
 msgid "primary device"
 msgstr ""
 
-#: devstatus.c:168 devstatus.c:426 devstatus.c:461
+#: devstatus.c:237 devstatus.c:537 devstatus.c:572
 msgid "Device"
 msgstr ""
 
-#: devstatus.c:170
+#: devstatus.c:239
 msgid "-- Live"
 msgstr ""
 
-#: devstatus.c:191 devstatus.c:446
+#: devstatus.c:264 devstatus.c:557
 msgid "currently no recordings"
 msgstr ""
 
-#: devstatus.c:208
+#: devstatus.c:282
 #, c-format
-msgid "  tuned to %4d + %s"
+msgid "  %4d %s %s"
 msgstr ""
 
-#: devstatus.c:210
-#, c-format
-msgid "  tuned to %4d - %s"
-msgstr ""
-
-#: devstatus.c:235
+#: devstatus.c:313
 msgid "no recordings"
 msgstr ""
 
-#: devstatus.c:235
+#: devstatus.c:313
 msgid "recordings"
 msgstr ""
 
-#: devstatus.c:236
+#: devstatus.c:314
 msgid "no strength"
 msgstr ""
 
-#: devstatus.c:236
+#: devstatus.c:314
 msgid "strength"
 msgstr ""
 
-#: devstatus.c:237
+#: devstatus.c:315
 msgid "channels"
 msgstr ""
 
-#: devstatus.c:237
+#: devstatus.c:315
 msgid "no channels"
 msgstr ""
 
-#: devstatus.c:238
+#: devstatus.c:316
 msgid "Refresh display"
 msgstr ""
 
-#: devstatus.c:418
+#: devstatus.c:443
+msgid "Show recordings"
+msgstr ""
+
+#: devstatus.c:444
+msgid "Show signals"
+msgstr ""
+
+#: devstatus.c:445
+msgid "Show channels"
+msgstr ""
+
+#: devstatus.c:530
 msgid "List of DVB devices"
 msgstr ""
 
-#: devstatus.c:456
+#: devstatus.c:568
 msgid "Number of concurrent recordings"
 msgstr ""
