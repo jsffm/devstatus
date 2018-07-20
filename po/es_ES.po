@@ -6,8 +6,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: VDR 1.5.7\n"
-"Report-Msgid-Bugs-To: <cwieninger@gmx.de>\n"
-"POT-Creation-Date: 2007-08-31 15:51+0200\n"
+"Report-Msgid-Bugs-To: <vdr@constabel.net>\n"
+"POT-Creation-Date: 2008-01-02 10:55+0100\n"
 "PO-Revision-Date: 2007-08-18 21:11+0200\n"
 "Last-Translator: Ruben Nunez Francisco <ruben.nunez@tang-it.com>\n"
 "Language-Team: <vdr@linuxtv.org>\n"
@@ -17,25 +17,39 @@ msgstr ""
 
 #: recstatus.c:14
 #, fuzzy
-msgid "recording status monitor"
+msgid "Recording status of dvb devices"
 msgstr "Estado de la grabación"
 
 #: recstatus.c:15 recstatus.c:83
 msgid "Recording status"
 msgstr "Estado de la grabación"
 
-#: recstatus.c:91
+#: recstatus.c:91 recstatus.c:272
 msgid "device with decoder"
 msgstr "Decodificador"
 
-#: recstatus.c:91
+#: recstatus.c:91 recstatus.c:272
 msgid "primary device"
 msgstr "Dispositivo principal"
 
-#: recstatus.c:93
+#: recstatus.c:93 recstatus.c:273 recstatus.c:308
 msgid "Device"
 msgstr "Dispositivo"
 
-#: recstatus.c:111
-msgid "no current recordings"
+#: recstatus.c:111 recstatus.c:293
+#, fuzzy
+msgid "currently no recordings"
 msgstr "actualmente no hay grabaciones"
+
+#: recstatus.c:265
+msgid "List of DVB devices"
+msgstr ""
+
+#: recstatus.c:303
+#, fuzzy
+msgid "Number of concurrent recordings"
+msgstr "actualmente no hay grabaciones"
+
+#, fuzzy
+#~ msgid "recording status monitor"
+#~ msgstr "Estado de la grabación"

@@ -1,6 +1,22 @@
 VDR Plugin 'recstatus' Revision History
 ---------------------------------------
 
+2008-01-01: Version 0.0.8-beta1
+
+- added SVDRP interface with the following command:
+
+  * RECSTAT
+        Print all devices with there Recordingstats.
+
+  Thanks to Kron from vdrportal.de.
+
+- added SVDRP command RECNUMBER
+
+  * RECNUMBER
+        Print number of concurrent recordings for all devices.
+
+  Thanks to All-Ex from vdrportal.de.
+
 2007-12-31: Version 0.0.7
 
 - added Italian translation, thanks to Diego from vdr-italia.phpbb24.com

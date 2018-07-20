@@ -10,8 +10,8 @@
 #include <vdr/menu.h>
 #include "i18n.h"
 
-static const char *VERSION        = "0.0.7";
-static const char *DESCRIPTION    = trNOOP("recording status monitor");
+static const char *VERSION        = "0.0.8-beta1";
+static const char *DESCRIPTION    = trNOOP("Recording status of dvb devices");
 static const char *MAINMENUENTRY  = trNOOP("Recording status");
 
 #undef DAYDATETIMESTRING
@@ -108,7 +108,7 @@ public:
 	      }
 	      if (Count == 0)
 	      {
-		  cMenuRecItem* norec =  new cMenuRecItem(tr("no current recordings"));
+		  cMenuRecItem* norec =  new cMenuRecItem(tr("currently no recordings"));
 		  norec->SetSelectable(false);
 		  Add(norec);
 	      }
@@ -247,12 +247,81 @@ bool cPluginRecstatus::Service(const char *Id, void *Data)
 const char **cPluginRecstatus::SVDRPHelpPages(void)
 {
   // Return help text for SVDRP commands this plugin implements
-  return NULL;
+  static const char *HelpPages[] = {
+    "RECSTAT\n"
+    "    Print all devices with there Recordingstats.",
+    "RECNUMBER\n"
+    "    Print number of concurrent recordings for all devices.",
+    NULL
+    };
+  return HelpPages;
 }
 
 cString cPluginRecstatus::SVDRPCommand(const char *Command, const char *Option, int &ReplyCode)
 {
   // Process SVDRP commands this plugin implements
+  if(strcasecmp(Command, "RECSTAT") == 0) {
+    char* output = NULL;
+    asprintf(&output, "%s:\n", tr("List of DVB devices"));
+    for (int i = 0; i < cDevice::NumDevices(); i++)
+    {
+      cDevice *d = cDevice::GetDevice(i);
+      char* devName = NULL;
+      char* devInfo = NULL;
+      if (d->HasDecoder() || d->IsPrimaryDevice())
+        asprintf(&devInfo, " (%s%s%s)", d->HasDecoder() ? tr("device with decoder") : "", (d->HasDecoder() && d->IsPrimaryDevice()) ? ", " : "", d->IsPrimaryDevice() ? tr("primary device") : "");
+      asprintf(&devName, "--- %s %d%s ---", tr("Device"), i+1, devInfo ? devInfo : "");
+      asprintf(&output, "%s  %s:\n", output , devName); // add device output and there info's
+      free(devName);
+      if (devInfo)
+        free(devInfo);
+    int Count = 0;
+    for (cRecObj *r = CurrentRecordings.First(); r; r = CurrentRecordings.Next(r)){ // add recordings to the output
+      if (r && r->device == d){
+        char* Name = NULL;
+        if (r->name){
+          Name = strdup(r->name);
+          char* itemText = NULL;
+	  asprintf(&itemText, "%s %s", DAYDATETIME(r->timer->StartTime()), Name);
+          asprintf(&output, "%s    %s\n", output , itemText);
+          free(itemText);
+        }
+        Count++;
+      }
+    }
+    if (Count == 0)
+      asprintf(&output, "%s    %s\n", output, tr("currently no recordings"));
+    if (i < cDevice::NumDevices())
+      asprintf(&output, "%s\n", output);
+    }
+    // we use the default reply code here
+    return cString::sprintf("%s", output);
+  }
+
+  if(strcasecmp(Command, "RECNUMBER") == 0) {
+    char* output = NULL;
+    asprintf(&output, "%s:\n", tr("Number of concurrent recordings"));
+    for (int i = 0; i < cDevice::NumDevices(); i++)
+    {
+      cDevice *d = cDevice::GetDevice(i);
+      char* devName = NULL;
+      asprintf(&devName, "%s %d", tr("Device"), i+1);
+      asprintf(&output, "%s %s:", output , devName); // add device output and there info's
+      free(devName);
+    int Count = 0;
+    for (cRecObj *r = CurrentRecordings.First(); r; r = CurrentRecordings.Next(r)){ // add recordings to the output
+      if (r && r->device == d){
+        Count++;
+      }
+    }
+    asprintf(&output, "%s %i\n", output, Count);
+    if (i < cDevice::NumDevices())
+      asprintf(&output, "%s\n", output);
+    }
+    // we use the default reply code here
+    return cString::sprintf("%s", output);
+  }
+
   return NULL;
 }
 
