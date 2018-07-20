@@ -122,7 +122,7 @@ protected:
 #else
     virtual void Recording(const cDevice *Device, const char *Name);
 #endif
-    virtual void ChannelSwitch(const cDevice *Device, int ChannelNumber);
+    virtual void ChannelSwitch(const cDevice *Device, int ChannelNumber, bool LiveView);
 };
 
 cList<cRecObj> CurrentRecordings;
@@ -656,7 +656,7 @@ void cDevStatusMonitor::Recording(const cDevice *Device, const char *Name) {
     }
 }
 
-void cDevStatusMonitor::ChannelSwitch(const cDevice *Device, int ChannelNumber) {
+void cDevStatusMonitor::ChannelSwitch(const cDevice *Device, int ChannelNumber, bool LiveView) {
       if (!ChannelNumber) return;
       update=1;
 }
