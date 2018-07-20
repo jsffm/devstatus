@@ -7,42 +7,97 @@ msgid ""
 msgstr ""
 "Project-Id-Version: VDR 1.5.7\n"
 "Report-Msgid-Bugs-To: <vdr@constabel.net>\n"
-"POT-Creation-Date: 2008-01-02 10:54+0100\n"
-"PO-Revision-Date: 2007-08-18 21:11+0200\n"
+"POT-Creation-Date: 2008-11-15 15:49+0100\n"
+"PO-Revision-Date: 2008-11-02 21:51+0200\n"
 "Last-Translator: Mike Constabel <vdr@constabel.net>\n"
 "Language-Team: <vdr@linuxtv.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=ISO-8859-15\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: recstatus.c:14
-msgid "Recording status of dvb devices"
-msgstr "Aufnahmestatus der DVB Geräte"
+#: devstatus.c:17
+msgid "Status of dvb devices"
+msgstr "DVB-Gerätestatus"
 
-#: recstatus.c:15 recstatus.c:83
-msgid "Recording status"
-msgstr "Aufnahmestatus"
+#: devstatus.c:18 devstatus.c:139
+msgid "Device status"
+msgstr "Gerätestatus"
 
-#: recstatus.c:91 recstatus.c:272
+#: devstatus.c:35
+msgid "satellite card"
+msgstr "Satellitenkarte"
+
+#: devstatus.c:36
+msgid "cable card"
+msgstr "Kabelkarte"
+
+#: devstatus.c:37
+msgid "terrestrial card"
+msgstr "Terristische Karte"
+
+#: devstatus.c:38
+msgid "unknown cardtype"
+msgstr "unbekannter Kartentyp"
+
+#: devstatus.c:130
+#, c-format
+msgid "signal: %d %%, s/n: %d %%"
+msgstr "Signalstärke: %d %%, Signal/Rauschen %d %%"
+
+#: devstatus.c:153 devstatus.c:382
 msgid "device with decoder"
-msgstr "Gerät hat Decoder"
+msgstr "Gerät hat Dekoder"
 
-#: recstatus.c:91 recstatus.c:272
+#: devstatus.c:153 devstatus.c:382
 msgid "primary device"
 msgstr "Primärgerät"
 
-#: recstatus.c:93 recstatus.c:273 recstatus.c:308
+#: devstatus.c:155 devstatus.c:383 devstatus.c:418
 msgid "Device"
 msgstr "Gerät"
 
-#: recstatus.c:111 recstatus.c:293
+#: devstatus.c:174 devstatus.c:403
 msgid "currently no recordings"
 msgstr "keine laufenden Aufnahmen"
 
-#: recstatus.c:265
-msgid "List of DVB devices"
-msgstr "Liste der DVB Geräte"
+#: devstatus.c:190
+#, c-format
+msgid "  tuned to  %d - %s"
+msgstr " abgestimmt auf   %d - %s"
 
-#: recstatus.c:303
+#: devstatus.c:214
+msgid "no recordings"
+msgstr "Aufn.verbergen"
+
+#: devstatus.c:214
+msgid "recordings"
+msgstr "Aufn.zeigen"
+
+#: devstatus.c:215
+msgid "no strength"
+msgstr "Signal verbergen"
+
+#: devstatus.c:215
+msgid "strength"
+msgstr "Signal zeigen"
+
+#: devstatus.c:216
+msgid "channels"
+msgstr "Kanäle zeigen"
+
+#: devstatus.c:216
+msgid "no channels"
+msgstr "Kanäle verbergen"
+
+#: devstatus.c:217
+msgid " "
+msgstr " "
+
+#: devstatus.c:375
+msgid "List of DVB devices"
+msgstr "DVB-Geräteliste"
+
+#: devstatus.c:413
 msgid "Number of concurrent recordings"
 msgstr "Anzahl der laufenden Aufnahmen pro Gerät"
+
